@@ -23829,3 +23829,7 @@ Exception: Invalid session.
 [17:32:23] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
 [17:32:24] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
 [17:32:24] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [6261]
