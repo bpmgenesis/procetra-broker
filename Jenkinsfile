@@ -7,5 +7,11 @@ pipeline {
       }
     }
 
+    stage('Docker Local Remove') {
+      steps {
+        sh 'docker rmi apidera/mining-broker:1.0 --force'
+      }
+    }
+
   }
 }
