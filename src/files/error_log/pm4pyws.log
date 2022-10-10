@@ -23727,3 +23727,105 @@ anyio.BrokenResourceError
 [12:56:26] {/Volumes/Extreme 500/pythonProjects/mining-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=db5d0868-dc24-4171-8c6a-a130b9d6e68f user=admin
 [12:58:27] {/Volumes/Extreme 500/pythonProjects/mining-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=db5d0868-dc24-4171-8c6a-a130b9d6e68f process=1e3aa3ae-bbcf-4df9-bdc4-6c56322a0f8c
 [12:58:27] {/Volumes/Extreme 500/pythonProjects/mining-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=db5d0868-dc24-4171-8c6a-a130b9d6e68f process=1e3aa3ae-bbcf-4df9-bdc4-6c56322a0f8c
+[13:56:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [5268]
+[13:56:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[13:56:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[13:56:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[14:29:09] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py:376} ERROR - Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py", line 373, in run_asgi
+    result = await app(self.scope, self.receive, self.send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 75, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/fastapi/applications.py", line 208, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/errors.py", line 181, in __call__
+    raise exc
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/errors.py", line 159, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/gzip.py", line 23, in __call__
+    await responder(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/gzip.py", line 42, in __call__
+    await self.app(scope, receive, self.send_with_gzip)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/cors.py", line 92, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/cors.py", line 147, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/base.py", line 53, in __call__
+    async with anyio.create_task_group() as task_group:
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/anyio/_backends/_asyncio.py", line 574, in __aexit__
+    raise exceptions[0]
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/middleware/base.py", line 30, in coro
+    await self.app(scope, request.receive, send_stream.send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/exceptions.py", line 82, in __call__
+    raise exc
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/exceptions.py", line 71, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/routing.py", line 656, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/routing.py", line 259, in handle
+    await self.app(scope, receive, send)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/starlette/routing.py", line 61, in app
+    response = await func(request)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/fastapi/routing.py", line 216, in app
+    solved_result = await solve_dependencies(
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/fastapi/dependencies/utils.py", line 525, in solve_dependencies
+    solved = await call(**sub_values)
+  File "/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/session.py", line 47, in get_session
+    raise Exception('Invalid session.')
+Exception: Invalid session.
+[14:29:29] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[14:29:29] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[14:29:29] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[14:29:29] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [5268]
+[14:29:35] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [6261]
+[14:29:35] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[14:29:35] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[14:29:35] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[15:20:33] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6
+[15:20:33] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 user=admin
+[15:20:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:33:33] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6
+[15:33:33] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 user=admin
+[15:33:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:33:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6
+[15:33:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 user=admin
+[15:34:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:34:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:36:52] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:36:52] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=63e647c0-9471-4092-a86b-bc764e881959
+[15:39:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6
+[15:39:12] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 user=admin
+[15:39:13] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=87bb01e7-6416-40a6-b1e7-42e0355adcb6 process=7340d30c-9a60-422d-941e-703213f65e4d
+[17:02:48] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=d78f27f7-3e17-4eca-bc32-a5ad0b506afb
+[17:02:48] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=d78f27f7-3e17-4eca-bc32-a5ad0b506afb user=admin
+[17:12:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:12:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:14:10] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:14:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:14:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:14:37] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:14:37] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:14:38] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:14:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:14:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:14:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:14:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:17:13] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:17:14] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=8a763fd9-f7b2-43f8-96c3-20726397ffa6
+[17:23:20] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:23:20] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:23:21] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:23:38] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:23:38] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:23:39] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:23:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:23:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
+[17:24:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:24:34] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:32:23] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1053} INFO - get_case_duration start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:32:23] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/log.py:1261} INFO - get_attribute_values start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e process=b9bf5b5b-eba7-48cc-a0e8-e0315f2d265d
+[17:32:24] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:36} INFO - load_log_from_path start session=1cd92f5d-9d03-4569-88e7-a751a4c1833e
+[17:32:24] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/src/api/routers/load_log.py:48} INFO - load_log_from_path complete session=1cd92f5d-9d03-4569-88e7-a751a4c1833e user=admin
