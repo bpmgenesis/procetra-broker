@@ -36,5 +36,14 @@ pipeline {
       }
     }
 
+    stage('Server Publish') {
+      steps {
+        sh '''whoami &&
+eval "$(ssh-agent)" &&
+ssh-add ~/.ssh/api_broker &&
+ssh root@104.248.197.152 -o StrictHostKeyChecking=no \'cd /brokers && docker-compose down && docker rmi apidera/mining-broker:1.0 -f && docker-compose up --remove-orphans -d\''''
+      }
+    }
+
   }
 }
