@@ -1,0 +1,50 @@
+,Case ID,Activity,time:timestamp,End Date,Agent Position,Customer ID,Product,Service Type,Resource,case:concept:name,concept:name,@@index,start_timestamp
+0,Case 19,Inbound Email,2010-03-14 14:08:00,2010-03-18 08:04:00,FL,Customer 17,MacBook Pro,Product Assistance,Henk,Case 19,Inbound Email,28,2010-03-18 08:04:00
+1,Case 17,Inbound Call,2010-03-14 17:53:00,2010-03-14 17:56:00,FL,Customer 15,MacBook Pro,Referred to Servicer,Monique,Case 17,Inbound Call,26,2010-03-14 17:56:00
+2,Case 19,Inbound Email,2010-03-18 08:06:00,2010-03-18 08:07:00,FL,Customer 17,MacBook Pro,Product Assistance,Henk,Case 19,Inbound Email,29,2010-03-18 08:07:00
+3,Case 19,Handle Case,2010-03-18 08:07:00,2010-03-18 08:08:00,FL,Customer 17,MacBook Pro,Product Assistance,Henk,Case 19,Handle Case,30,2010-03-18 08:08:00
+4,Case 19,Handle Case,2010-03-18 08:09:00,2010-03-18 08:09:00,FL,Customer 17,MacBook Pro,Product Assistance,Henk,Case 19,Handle Case,31,2010-03-18 08:09:00
+5,Case 5,Inbound Call,2010-03-18 10:54:00,2010-03-18 11:01:00,FL,Customer 5,MacBook Pro,Product Assistance,Kenny,Case 5,Inbound Call,6,2010-03-18 11:01:00
+6,Case 7,Inbound Call,2010-03-18 11:49:00,2010-03-18 11:50:00,FL,Customer 7,MacBook Pro,Product Assistance,Karen,Case 7,Inbound Call,10,2010-03-18 11:50:00
+7,Case 26,Inbound Call,2010-03-18 17:52:00,2010-03-18 17:52:00,FL,Customer 23,iPhone,Product Assistance,Christian,Case 26,Inbound Call,41,2010-03-18 17:52:00
+8,Case 9,Inbound Email,2010-03-19 19:47:00,2010-03-21 08:17:00,FL,Customer 9,MacBook Pro,Product Assistance,Samuil,Case 9,Inbound Email,12,2010-03-21 08:17:00
+9,Case 29,Inbound Call,2010-03-20 07:35:00,2010-03-20 07:36:00,FL,Customer 3,MacBook Pro,Product Assistance,Henk,Case 29,Inbound Call,45,2010-03-20 07:36:00
+10,Case 31,Inbound Call,2010-03-20 10:48:00,2010-03-20 10:50:00,FL,Customer 26,MacBook Pro,Referred to Servicer,Wil,Case 31,Inbound Call,47,2010-03-20 10:50:00
+11,Case 9,Call Outbound,2010-03-21 08:32:00,2010-03-21 08:33:00,FL,Customer 9,MacBook Pro,Product Assistance,Samuil,Case 9,Call Outbound,13,2010-03-21 08:33:00
+12,Case 9,Handle Email,2010-03-21 08:33:00,2010-03-21 08:33:00,FL,Customer 9,MacBook Pro,Product Assistance,Samuil,Case 9,Handle Email,14,2010-03-21 08:33:00
+13,Case 22,Inbound Call,2010-03-22 08:30:00,2010-03-22 08:31:00,FL,Customer 3,MacBook Pro,Product Assistance,Erik,Case 22,Inbound Call,36,2010-03-22 08:31:00
+14,Case 30,Inbound Call,2010-03-22 10:16:00,2010-03-22 10:17:00,FL,Customer 25,iPhone,Product Assistance,Maja,Case 30,Inbound Call,46,2010-03-22 10:17:00
+15,Case 23,Inbound Call,2010-03-22 14:59:00,2010-03-22 15:13:00,FL,Customer 20,iPhone,Referred to Servicer,Ton,Case 23,Inbound Call,37,2010-03-22 15:13:00
+16,Case 3,Inbound Call,2010-03-25 09:32:00,2010-03-25 09:33:00,FL,Customer 3,MacBook Pro,Referred to Servicer,Mary,Case 3,Inbound Call,4,2010-03-25 09:33:00
+17,Case 16,Inbound Call,2010-03-25 10:26:00,2010-03-25 10:34:00,FL,Customer 14,MacBook Pro,Referred to Servicer,Helen,Case 16,Inbound Call,21,2010-03-25 10:34:00
+18,Case 18,Inbound Call,2010-03-25 10:35:00,2010-03-25 10:38:00,FL,Customer 16,iPhone,Referred to Servicer,Karen,Case 18,Inbound Call,27,2010-03-25 10:38:00
+19,Case 6,Inbound Call,2010-03-25 17:09:00,2010-03-25 17:13:00,FL,Customer 6,MacBook Pro,Referred to Servicer,Harold,Case 6,Inbound Call,7,2010-03-25 17:13:00
+20,Case 6,Inbound Call,2010-03-25 17:16:00,2010-03-25 17:18:00,FL,Customer 6,MacBook Pro,Referred to Servicer,Nancy,Case 6,Inbound Call,8,2010-03-25 17:18:00
+21,Case 6,Inbound Call,2010-03-26 08:36:00,2010-03-26 08:40:00,FL,Customer 6,MacBook Pro,Referred to Servicer,Elena,Case 6,Inbound Call,9,2010-03-26 08:40:00
+22,Case 31,Handle Case,2010-03-26 13:21:00,2010-03-26 13:22:00,FL,Customer 26,MacBook Pro,Referred to Servicer,Wil,Case 31,Handle Case,48,2010-03-26 13:22:00
+23,Case 11,Inbound Call,2010-03-27 08:09:00,2010-03-27 08:11:00,FL,Customer 11,iPhone,Product Assistance,Irena,Case 11,Inbound Call,16,2010-03-27 08:11:00
+24,Case 10,Handle Email,2010-03-27 11:29:00,2010-03-27 11:30:00,FL,Customer 10,iPhone,Product Assistance,Jochem,Case 10,Handle Email,15,2010-03-27 11:30:00
+25,Case 20,Handle Case,2010-03-27 11:39:00,2010-03-27 11:39:00,FL,Customer 18,iPhone,Product Assistance,Mariska,Case 20,Handle Case,32,2010-03-27 11:39:00
+26,Case 20,Handle Case,2010-03-27 12:04:00,2010-03-27 12:10:00,FL,Customer 18,iPhone,Product Assistance,Mariska,Case 20,Handle Case,33,2010-03-27 12:10:00
+27,Case 24,Inbound Call,2010-03-28 10:04:00,2010-03-28 10:09:00,FL,Customer 21,iPhone,Referred to Servicer,Kenny,Case 24,Inbound Call,38,2010-03-28 10:09:00
+28,Case 12,Inbound Call,2010-03-29 09:28:00,2010-03-29 09:29:00,FL,Customer 3,MacBook Pro,Product Assistance,Wil,Case 12,Inbound Call,17,2010-03-29 09:29:00
+29,Case 27,Inbound Call,2010-03-29 14:33:00,2010-03-29 14:35:00,FL,Customer 3,iPhone,Product Assistance,Anne,Case 27,Inbound Call,42,2010-03-29 14:35:00
+30,Case 17,Inbound Call,2010-04-03 07:35:00,2010-04-03 07:46:00,FL,Customer 15,MacBook Pro,Referred to Servicer,Kenny,Case 17,Inbound Call,22,2010-04-03 07:46:00
+31,Case 14,Inbound Call,2010-04-03 07:49:00,2010-04-03 07:50:00,FL,Customer 3,iPhone,Product Assistance,Wil,Case 14,Inbound Call,19,2010-04-03 07:50:00
+32,Case 17,Handle Case,2010-04-03 07:53:00,2010-04-03 07:55:00,FL,Customer 15,MacBook Pro,Referred to Servicer,Kenny,Case 17,Handle Case,23,2010-04-03 07:55:00
+33,Case 2,Inbound Call,2010-04-03 11:43:00,2010-04-03 11:46:00,FL,Customer 2,MacBook Pro,Referred to Servicer,Susi,Case 2,Inbound Call,3,2010-04-03 11:46:00
+34,Case 21,Inbound Call,2010-04-03 12:17:00,2010-04-03 12:22:00,FL,Customer 19,iPhone,Product Assistance,Anne,Case 21,Inbound Call,35,2010-04-03 12:22:00
+35,Case 20,Handle Case,2010-04-04 09:34:00,2010-04-04 09:34:00,FL,Customer 18,iPhone,Product Assistance,Mariska,Case 20,Handle Case,34,2010-04-04 09:34:00
+36,Case 13,Inbound Call,2010-05-03 10:13:00,2010-05-03 10:15:00,FL,Customer 12,MacBook Pro,Product Assistance,Ton,Case 13,Inbound Call,18,2010-05-03 10:15:00
+37,Case 4,Inbound Call,2010-06-03 11:41:00,2010-06-03 11:51:00,FL,Customer 4,iPhone,Referred to Servicer,Fred,Case 4,Inbound Call,5,2010-06-03 11:51:00
+38,Case 28,Handle Email,2010-06-03 13:57:00,2010-06-03 14:03:00,FL,Customer 24,iPhone,Product Assistance,Mary,Case 28,Handle Email,43,2010-06-03 14:03:00
+39,Case 28,Call Outbound,2010-06-03 14:03:00,2010-06-03 14:04:00,FL,Customer 24,iPhone,Product Assistance,Mary,Case 28,Call Outbound,44,2010-06-03 14:04:00
+40,Case 15,Inbound Call,2010-07-03 08:06:00,2010-07-03 08:13:00,FL,Customer 13,iPhone,Product Assistance,Erik,Case 15,Inbound Call,20,2010-07-03 08:13:00
+41,Case 17,Handle Case,2010-08-03 11:16:00,2010-08-03 11:18:00,FL,Customer 15,MacBook Pro,Referred to Servicer,Kenny,Case 17,Handle Case,24,2010-08-03 11:18:00
+42,Case 1,Inbound Call,2010-09-03 08:05:00,2010-09-03 08:10:00,FL,Customer 1,MacBook Pro,Referred to Servicer,Helen,Case 1,Inbound Call,0,2010-09-03 08:10:00
+43,Case 8,Inbound Call,2010-11-03 09:20:00,2010-11-03 09:23:00,FL,Customer 8,MacBook Pro,Referred to Servicer,Karen,Case 8,Inbound Call,11,2010-11-03 09:23:00
+44,Case 1,Handle Case,2010-11-03 10:30:00,2010-11-03 10:32:00,FL,Customer 1,MacBook Pro,Referred to Servicer,Helen,Case 1,Handle Case,1,2010-11-03 10:32:00
+45,Case 17,Handle Case,2010-11-03 11:15:00,2010-11-03 11:19:00,FL,Customer 15,MacBook Pro,Referred to Servicer,Kenny,Case 17,Handle Case,25,2010-11-03 11:19:00
+46,Case 1,Call Outbound,2010-11-03 11:45:00,2010-11-03 11:52:00,FL,Customer 1,MacBook Pro,Referred to Servicer,Henk,Case 1,Call Outbound,2,2010-11-03 11:52:00
+47,Case 25,Inbound Call,2010-12-03 09:53:00,2010-12-03 09:56:00,FL,Customer 22,iPhone,Product Assistance,Henk,Case 25,Inbound Call,39,2010-12-03 09:56:00
+48,Case 25,Call Outbound,2010-12-03 11:45:00,2010-12-03 11:49:00,FL,Customer 22,iPhone,Product Assistance,Henk,Case 25,Call Outbound,40,2010-12-03 11:49:00

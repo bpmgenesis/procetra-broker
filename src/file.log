@@ -1,0 +1,4 @@
+2022-07-05 16:49:30,828 - backup_logger - INFO - info: hello world!
+2022-07-05 16:49:33,602 - backup_logger - WARNING - warning: hello world!
+warning: hello world!
+warning: hello world!

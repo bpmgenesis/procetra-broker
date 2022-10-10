@@ -1,0 +1,33 @@
+case:concept:name,variant,time:timestamp,@@classifier,time:timestamp_2,@@classifier_2,caseDuration,count
+Case 1,"Inbound Call,Handle Case,Call Outbound",2010-09-03 08:05:00,Inbound Call,2010-11-03 11:45:00,Call Outbound,5283600.0,1
+Case 10,Handle Email,2010-03-27 11:29:00,Handle Email,2010-03-27 11:29:00,Handle Email,0.0,1
+Case 11,Inbound Call,2010-03-27 08:09:00,Inbound Call,2010-03-27 08:09:00,Inbound Call,0.0,1
+Case 12,Inbound Call,2010-03-29 09:28:00,Inbound Call,2010-03-29 09:28:00,Inbound Call,0.0,1
+Case 13,Inbound Call,2010-05-03 10:13:00,Inbound Call,2010-05-03 10:13:00,Inbound Call,0.0,1
+Case 14,Inbound Call,2010-04-03 07:49:00,Inbound Call,2010-04-03 07:49:00,Inbound Call,0.0,1
+Case 15,Inbound Call,2010-07-03 08:06:00,Inbound Call,2010-07-03 08:06:00,Inbound Call,0.0,1
+Case 16,Inbound Call,2010-03-25 10:26:00,Inbound Call,2010-03-25 10:26:00,Inbound Call,0.0,1
+Case 17,"Inbound Call,Inbound Call,Handle Case,Handle Case,Handle Case",2010-03-14 17:53:00,Inbound Call,2010-11-03 11:15:00,Handle Case,20193720.0,1
+Case 18,Inbound Call,2010-03-25 10:35:00,Inbound Call,2010-03-25 10:35:00,Inbound Call,0.0,1
+Case 19,"Inbound Email,Inbound Email,Handle Case,Handle Case",2010-03-14 14:08:00,Inbound Email,2010-03-18 08:09:00,Handle Case,324060.0,1
+Case 2,Inbound Call,2010-04-03 11:43:00,Inbound Call,2010-04-03 11:43:00,Inbound Call,0.0,1
+Case 20,"Handle Case,Handle Case,Handle Case",2010-03-27 11:39:00,Handle Case,2010-04-04 09:34:00,Handle Case,683700.0,1
+Case 21,Inbound Call,2010-04-03 12:17:00,Inbound Call,2010-04-03 12:17:00,Inbound Call,0.0,1
+Case 22,Inbound Call,2010-03-22 08:30:00,Inbound Call,2010-03-22 08:30:00,Inbound Call,0.0,1
+Case 23,Inbound Call,2010-03-22 14:59:00,Inbound Call,2010-03-22 14:59:00,Inbound Call,0.0,1
+Case 24,Inbound Call,2010-03-28 10:04:00,Inbound Call,2010-03-28 10:04:00,Inbound Call,0.0,1
+Case 25,"Inbound Call,Call Outbound",2010-12-03 09:53:00,Inbound Call,2010-12-03 11:45:00,Call Outbound,6720.0,1
+Case 26,Inbound Call,2010-03-18 17:52:00,Inbound Call,2010-03-18 17:52:00,Inbound Call,0.0,1
+Case 27,Inbound Call,2010-03-29 14:33:00,Inbound Call,2010-03-29 14:33:00,Inbound Call,0.0,1
+Case 28,"Handle Email,Call Outbound",2010-06-03 13:57:00,Handle Email,2010-06-03 14:03:00,Call Outbound,360.0,1
+Case 29,Inbound Call,2010-03-20 07:35:00,Inbound Call,2010-03-20 07:35:00,Inbound Call,0.0,1
+Case 3,Inbound Call,2010-03-25 09:32:00,Inbound Call,2010-03-25 09:32:00,Inbound Call,0.0,1
+Case 30,Inbound Call,2010-03-22 10:16:00,Inbound Call,2010-03-22 10:16:00,Inbound Call,0.0,1
+Case 31,"Inbound Call,Handle Case",2010-03-20 10:48:00,Inbound Call,2010-03-26 13:21:00,Handle Case,527580.0,1
+Case 32,"Inbound Call,Handle Case,Call Outbound",2010-09-03 08:05:00,Inbound Call,2010-11-03 11:45:00,Call Outbound,5283600.0,1
+Case 4,Inbound Call,2010-06-03 11:41:00,Inbound Call,2010-06-03 11:41:00,Inbound Call,0.0,1
+Case 5,Inbound Call,2010-03-18 10:54:00,Inbound Call,2010-03-18 10:54:00,Inbound Call,0.0,1
+Case 6,"Inbound Call,Inbound Call,Inbound Call",2010-03-25 17:09:00,Inbound Call,2010-03-26 08:36:00,Inbound Call,55620.0,1
+Case 7,Inbound Call,2010-03-18 11:49:00,Inbound Call,2010-03-18 11:49:00,Inbound Call,0.0,1
+Case 8,Inbound Call,2010-11-03 09:20:00,Inbound Call,2010-11-03 09:20:00,Inbound Call,0.0,1
+Case 9,"Inbound Email,Call Outbound,Handle Email",2010-03-19 19:47:00,Inbound Email,2010-03-21 08:33:00,Handle Email,132360.0,1
