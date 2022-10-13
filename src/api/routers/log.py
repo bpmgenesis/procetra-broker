@@ -1129,6 +1129,38 @@ def get_activities(session: SessionInfo = Depends(get_session), project_id: str 
     return dictio
 
 
+@router.post('/GetActivitiesCount')
+def get_activities_count(session: SessionInfo = Depends(get_session), project_id: str = Form(...),
+                   activity_key: str = Form(...)):
+    """
+       Gets Activity Counts
+       Returns
+       ------------
+       dictio
+           JSONified dictionary that contains in the 'base64' entry the SVG representation
+           of the case duration grap
+    """
+
+    dictio = {}
+    list = []
+
+    try:
+        dictio = session_manager.get_handler_for_process_and_session(project_id, session.session_id).get_attribute_values(
+            activity_key)
+        dictio = sorted(dictio.items(), key=lambda x: x[1], reverse=True)
+
+        result ={}
+        for item in dictio:
+            result[item[0]] = item[1]
+
+        return result
+
+    except:
+        logging.error(traceback.format_exc())
+        dictio = {}
+
+    return dictio
+
 @router.post('/GetLogSummary')
 def get_log_summary(session_id: str = Form(...), project_id: str = Form(...)):
     """
@@ -1330,6 +1362,35 @@ def get_throughput_times(session: SessionInfo = Depends(get_session),
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.post('/GetActivitiesThroughputTimes')
+def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
+                         project_id: str = Form(...),
+                         attribute_key: str = Form('concept:name')):
+    try:
+        attribute_key = attribute_key
+
+        dicto = {}
+        df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
+
+        mf = df.groupby(by=['case:concept:name','concept:name']).agg({'time:timestamp': ['min', 'max']})
+        mf = mf.reset_index()
+        mf.columns = ['case','activity', 'min', 'max']
+        mf['diff'] = mf['max'] - mf['min']
+        mf['diff_days'] = (mf['max'] - mf['min']).dt.days
+        mf['diff_hours'] = mf['diff'] / np.timedelta64(1, 'h')
+        mf['diff_minutes'] = mf['diff'] / np.timedelta64(1, 'm')
+        mf['diff_seconds'] = mf['diff'] / np.timedelta64(1, 's')
+
+        mf = mf.groupby(by='activity').agg({'diff_hours': ['sum']})
+        mf.columns = ['hours']
+        mf.sort_values(by=['hours'], inplace=True, ascending=False)
+        for index, row in mf.iterrows():
+            dicto[index] = row['hours']
+
+        return dicto
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post('/GetBottlenecks')
 def get_bottlenecks(session_id: str = Form(...), project_id: str = Form(...),
