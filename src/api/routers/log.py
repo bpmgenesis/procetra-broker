@@ -1312,7 +1312,9 @@ def get_daily_cases_per_mounth(session: SessionInfo = Depends(get_session),
     gr = gr.reset_index()
     gr.columns = ['month', 'year', 'case_count']
     gr['case_rate'] = gr['case_count'] / 30
-    gr['date_index'] = gr['year'].apply(str) + '_' + gr['month'].apply(str)
+
+    gr['date_index'] = gr['year'].apply(str) + '_' + gr['month'].apply(lambda x: "{}{}".format( '0'  if x < 10 else '', x))
+
     gr.sort_values(by='date_index', ascending=True, inplace=True)
 
     dicto = {
@@ -1335,6 +1337,7 @@ def get_throughput_times(session: SessionInfo = Depends(get_session),
 
         dicto = {}
         df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
+
 
         mf = df.groupby(by='case:concept:name').agg({'time:timestamp': ['min', 'max']})
         mf = mf.reset_index()
@@ -1372,6 +1375,8 @@ def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
 
         dicto = {}
         df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
+
+
 
         mf = df.groupby(by=['case:concept:name','concept:name']).agg({'time:timestamp': ['min', 'max']})
         mf = mf.reset_index()
