@@ -21,7 +21,7 @@ Process Mining API for BPM Genesis help you do process stuff.   🚀
 
 app = FastAPI(
     docs_url='/docs',
-    openapi_url="/mining-broker-schema.json",
+    #openapi_url="/mining-broker-schema.json",
     title="Process Mining Broker",
     description=description,
     version="0.0.1",

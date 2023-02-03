@@ -21,7 +21,7 @@ async def get_session_info(root_url: str, session_id: str):
     form.add_field('session_id', session_id)
 
     resp_data, content_type, status_code_from_service = await make_request(root_url + '/api/GetSessionInfo',
-                                                                           'POST', form, {"ticket": session_id})
+                                                                           'POST', form, {"token": session_id})
     my_json = resp_data.decode('utf8');
     response_dict = json.loads(my_json)
     if status_code_from_service == 200:
@@ -30,15 +30,15 @@ async def get_session_info(root_url: str, session_id: str):
         return None
 
 
-async def get_session(request: Request, ticket=Header(...)) -> SessionInfo:
+async def get_session(request: Request, token=Header(...)) -> SessionInfo:
     root_url = request.headers.get('origin')
     print('rootUrl', root_url)
     if root_url is None:
         raise Exception('Invalid root url.')
         # root_url = "https://bpmgenesis.com/"
-    session_info = await get_session_info(root_url, ticket)
+    session_info = await get_session_info(root_url, token)
     if session_info is not None:
-        si = SessionInfo(session_id=ticket, realm_id=session_info['realm_id'], account_id=session_info['account_id'],
+        si = SessionInfo(session_id=token, realm_id=session_info['realm_id'], account_id=session_info['account_id'],
                          account_name=session_info['account_name'],
                          tenant_id=session_info['tenant_id'], tenant_name=session_info['tenant_name'],
                          is_real_admin=session_info['is_real_admin'], is_tenant_admin=session_info['is_tenant_admin'])
