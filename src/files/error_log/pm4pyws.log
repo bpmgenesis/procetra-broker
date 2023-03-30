@@ -23833,3 +23833,47 @@ Exception: Invalid session.
 [17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
 [17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
 [17:43:54] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [6261]
+[14:20:03] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [7191]
+[14:20:03] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[14:20:03] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[14:20:03] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[14:50:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[14:50:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[14:50:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[14:50:42] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [7191]
+[14:51:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [8330]
+[14:51:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[14:51:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[14:51:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[14:58:43] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[14:58:43] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[14:58:43] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[14:58:43] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [8330]
+[14:58:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [8466]
+[14:58:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[14:58:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[14:58:51] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[14:59:05] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[14:59:05] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[14:59:05] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[14:59:05] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [8466]
+[14:59:10] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [8477]
+[14:59:10] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[14:59:10] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[14:59:10] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[15:05:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[15:05:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[15:05:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[15:05:11] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [8477]
+[15:05:16] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [8608]
+[15:05:16] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[15:05:16] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[15:05:16] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+[15:06:35] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:263} INFO - Shutting down
+[15:06:36] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:64} INFO - Waiting for application shutdown.
+[15:06:36] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:75} INFO - Application shutdown complete.
+[15:06:36] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:94} INFO - Finished server process [8608]
+[15:06:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:84} INFO - Started server process [8644]
+[15:06:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:45} INFO - Waiting for application startup.
+[15:06:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py:59} INFO - Application startup complete.
+[15:06:40] {/Users/selimtan/Organizations/bpmgenesis/procetra-broker/venv/lib/python3.10/site-packages/uvicorn/server.py:217} INFO - Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)

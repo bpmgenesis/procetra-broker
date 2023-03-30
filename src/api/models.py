@@ -24,7 +24,7 @@ class MappingModel(OrgDbBase):
     mapping_data = Column(Text())
 
 
-class Project(OrgDbBase):
+class ProjectDBModel(OrgDbBase):
     __tablename__ = 'projects'
 
     realm_id = Column(String(length=100),  index=True)

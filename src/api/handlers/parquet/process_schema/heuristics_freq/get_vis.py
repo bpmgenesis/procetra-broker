@@ -1,6 +1,5 @@
 from pm4py.algo.discovery.dfg.adapters.pandas import df_statistics
 from pm4py.algo.filtering.common.filtering_constants import CASE_CONCEPT_NAME
-from pm4py.algo.filtering.pandas.auto_filter import auto_filter
 from pm4py.objects.heuristics_net.obj import HeuristicsNet
 from pm4py.objects.log.util import xes
 from pm4py.visualization.common.utils import get_base64_from_file

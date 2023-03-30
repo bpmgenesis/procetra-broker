@@ -2,7 +2,9 @@ from fastapi import FastAPI, Request
 import uvicorn
 from api import models
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import project, session, log, pre_processing, statistics, process_schema, analyse_model, mappings, \
+from api.routers import project, session, log, \
+    pre_processing, statistics, process_schema, \
+    analyse_model, mappings, \
     filter, metrics
 from api.routers import import_event_data, load_log
 from api.database import engine
@@ -79,6 +81,8 @@ app.include_router(filter.router)
 app.include_router(mappings.router)
 app.include_router(analyse_model.router)
 app.include_router(project.router)
+app.include_router(project.ProjectRouter)
+
 app.include_router(session.router)
 app.include_router(log.router)
 app.include_router(pre_processing.router)

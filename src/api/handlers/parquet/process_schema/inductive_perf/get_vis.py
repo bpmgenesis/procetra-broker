@@ -1,6 +1,5 @@
 from pm4py.algo.discovery.dfg.adapters.pandas import df_statistics
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
-from pm4py.algo.filtering.pandas.auto_filter import auto_filter
 from pm4py.objects.log.util import xes
 from pm4py.visualization.common.utils import get_base64_from_gviz
 from pm4py.visualization.petri_net import visualizer as pn_vis_factory

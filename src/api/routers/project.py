@@ -3,6 +3,9 @@ from api import database, schemas
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException
 from fastapi.encoders import jsonable_encoder
+
+from api.fastapi_crudrouter import SQLAlchemyCRUDRouter
+from api.models import ProjectDBModel
 from api.repository import project
 from api import oauth2
 from typing import List
@@ -26,6 +29,7 @@ from io import StringIO
 
 from api.routers.globals import session_manager, clean_expired_sessions, check_session_validity, do_login, \
     get_user_from_session
+from typing import Union
 
 router = APIRouter(
     prefix="/v1",
@@ -34,6 +38,30 @@ router = APIRouter(
 
 get_db = database.get_db
 engine = database.engine
+
+
+class ProjectCreate(BaseModel):
+    realm_id: str
+    tenant_id: str
+    project_id: str
+    project_name: str
+
+
+class Project(ProjectCreate):
+    id: str
+
+    class Config:
+        orm_mode = True
+
+
+ProjectRouter = SQLAlchemyCRUDRouter(
+    schema=Project,
+    create_schema=ProjectCreate,
+    db_model=ProjectDBModel,
+    db=database.get_db,
+    prefix='v1/projects',
+    tags=['Projects']
+)
 
 
 class CsvLog(BaseModel):
@@ -46,13 +74,17 @@ table_name = 'evet_logs'
 @router.post('/CreateProject')
 def create_project(
         session: SessionInfo = Depends(get_session),
+        project_id: Union[str | None] = Form(...),
         project_name: str = Form(...),
         admin: str = Form(...),
         is_public: bool = Form(...),
         disable_cache: bool = Form(...),
         db: Session = Depends(database.get_org_event_db)):
     try:
-        project_id = str(uuid4())
+
+        if project_id is None or project_id == 'unique.id':
+            project_id = str(uuid4())
+
         projectObject = {
             'project_id': project_id,
             'project_name': project_name,

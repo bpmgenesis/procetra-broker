@@ -407,7 +407,7 @@ class ParquetHandler(object):
 
             self.variants_df = case_statistics.get_variants_df_with_case_duration(dataframe,
                                                                                   parameters=parameters)
-            self.save_most_common_variant(self.variants_df)
+           # self.save_most_common_variant(self.variants_df)
 
     def get_variants_df(self):
         """
