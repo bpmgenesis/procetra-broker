@@ -139,12 +139,12 @@ async def load_csv(
         log_id = save_log_org(project_id, session.tenant_id, log_csv, case_column_name, activity_column_name,
                               timestamp_key,
                               start_timestamp_key, sep, db_event_info)
-        # update project data
-        project = project_repository.get(session.realm_id, session.tenant_id, project_id, db_event_info)
-        if project is None:
-            raise Exception("Project Not Found")
-
-        project.is_data_loaded = True;
+        # # update project data
+        # project = project_repository.get(session.realm_id, session.tenant_id, project_id, db_event_info)
+        # if project is None:
+        #     raise Exception("Project Not Found")
+        #
+        # project.is_data_loaded = True;
         db_event_info.commit()
 
         return {

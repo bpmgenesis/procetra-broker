@@ -1105,7 +1105,8 @@ def get_activities(session: SessionInfo = Depends(get_session), project_id: str 
     list = []
 
     try:
-        dictio = session_manager.get_handler_for_process_and_session(project_id, session.session_id).get_attribute_values(
+        dictio = session_manager.get_handler_for_process_and_session(project_id,
+                                                                     session.session_id).get_attribute_values(
             activity_key)
         df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
         case_count = len(df['case:concept:name'].unique())
@@ -1113,25 +1114,27 @@ def get_activities(session: SessionInfo = Depends(get_session), project_id: str 
         mf.columns = ['count']
         mf = mf.reset_index()
 
+        result = []
         for key in dictio:
             case_len = len(mf[mf['concept:name'] == key]['case:concept:name'].unique())
-            dictio[key] = {
+            result.append({
+                'activity_name': key,
                 'event_count': dictio[key],
                 'total_case': case_count,
                 'case_count': case_len,
                 'case_rate': (case_len / case_count) * 100
-            }
+            })
 
     except:
         logging.error(traceback.format_exc())
-        dictio = {}
+        result = []
 
-    return dictio
+    return result
 
 
 @router.post('/GetActivitiesCount')
 def get_activities_count(session: SessionInfo = Depends(get_session), project_id: str = Form(...),
-                   activity_key: str = Form(...)):
+                         activity_key: str = Form(...)):
     """
        Gets Activity Counts
        Returns
@@ -1145,11 +1148,12 @@ def get_activities_count(session: SessionInfo = Depends(get_session), project_id
     list = []
 
     try:
-        dictio = session_manager.get_handler_for_process_and_session(project_id, session.session_id).get_attribute_values(
+        dictio = session_manager.get_handler_for_process_and_session(project_id,
+                                                                     session.session_id).get_attribute_values(
             activity_key)
         dictio = sorted(dictio.items(), key=lambda x: x[1], reverse=True)
 
-        result ={}
+        result = {}
         for item in dictio:
             result[item[0]] = item[1]
 
@@ -1160,6 +1164,7 @@ def get_activities_count(session: SessionInfo = Depends(get_session), project_id
         dictio = {}
 
     return dictio
+
 
 @router.post('/GetLogSummary')
 def get_log_summary(session_id: str = Form(...), project_id: str = Form(...)):
@@ -1313,7 +1318,8 @@ def get_daily_cases_per_mounth(session: SessionInfo = Depends(get_session),
     gr.columns = ['month', 'year', 'case_count']
     gr['case_rate'] = gr['case_count'] / 30
 
-    gr['date_index'] = gr['year'].apply(str) + '_' + gr['month'].apply(lambda x: "{}{}".format( '0'  if x < 10 else '', x))
+    gr['date_index'] = gr['year'].apply(str) + '_' + gr['month'].apply(
+        lambda x: "{}{}".format('0' if x < 10 else '', x))
 
     gr.sort_values(by='date_index', ascending=True, inplace=True)
 
@@ -1337,7 +1343,6 @@ def get_throughput_times(session: SessionInfo = Depends(get_session),
 
         dicto = {}
         df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
-
 
         mf = df.groupby(by='case:concept:name').agg({'time:timestamp': ['min', 'max']})
         mf = mf.reset_index()
@@ -1368,19 +1373,17 @@ def get_throughput_times(session: SessionInfo = Depends(get_session),
 
 @router.post('/GetActivitiesThroughputTimes')
 def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
-                         project_id: str = Form(...),
-                         attribute_key: str = Form('concept:name')):
+                                    project_id: str = Form(...),
+                                    attribute_key: str = Form('concept:name')):
     try:
         attribute_key = attribute_key
 
         dicto = {}
         df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
 
-
-
-        mf = df.groupby(by=['case:concept:name','concept:name']).agg({'time:timestamp': ['min', 'max']})
+        mf = df.groupby(by=['case:concept:name', 'concept:name']).agg({'time:timestamp': ['min', 'max']})
         mf = mf.reset_index()
-        mf.columns = ['case','activity', 'min', 'max']
+        mf.columns = ['case', 'activity', 'min', 'max']
         mf['diff'] = mf['max'] - mf['min']
         mf['diff_days'] = (mf['max'] - mf['min']).dt.days
         mf['diff_hours'] = mf['diff'] / np.timedelta64(1, 'h')
@@ -1396,6 +1399,7 @@ def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
         return dicto
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post('/GetBottlenecks')
 def get_bottlenecks(session_id: str = Form(...), project_id: str = Form(...),

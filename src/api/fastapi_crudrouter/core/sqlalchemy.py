@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, Response, Request
 from sqlalchemy import desc
 from . import CRUDGenerator, NOT_FOUND, _utils
 from ._types import DEPENDENCIES, PAGINATION, PYDANTIC_SCHEMA as SCHEMA
+import json
 
 try:
     from sqlalchemy.orm import Session
@@ -75,7 +76,7 @@ class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
                 response: Response,
                 db: Session = Depends(self.db_func),
                 pagination: PAGINATION = self.pagination,
-               # session=Depends(globals.get_session),
+                #session=Depends(globals.get_session),
         ) -> List[Model]:
 
             skip, limit = pagination.get("skip"), pagination.get("limit")
@@ -156,17 +157,21 @@ class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
         return route
 
     def _update(self, *args: Any, **kwargs: Any) -> CALLABLE:
-        def route(
+        async def route(
+                request: Request,
+                response: Response,
                 item_id: self._pk_type,  # type: ignore
                 model: self.update_schema,  # type: ignore
                 db: Session = Depends(self.db_func),
         ) -> Model:
             try:
                 db_model: Model = self._get_one()(item_id, db)
-
+                resp_data = await request.body()
+                resp_dict = json.loads(resp_data.decode("utf-8"))
                 for key, value in model.dict(exclude={self._pk}).items():
-                    if hasattr(db_model, key):
-                        setattr(db_model, key, value)
+                    if key in resp_dict:
+                        if hasattr(db_model, key):
+                            setattr(db_model, key, value)
 
                 db.commit()
                 db.refresh(db_model)
