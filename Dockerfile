@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn:python3.8-slim
+FROM tiangolo/uvicorn-gunicorn:python3.9-slim
 WORKDIR /server
 RUN apt-get update
 RUN apt-get install graphviz -y
