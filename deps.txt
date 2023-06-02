@@ -10,7 +10,6 @@ attrs==21.4.0
 backcall==0.2.0
 bcrypt==3.2.0
 bpmn-python==0.0.18
-certifi==2022.6.15
 cffi==1.15.0
 charset-normalizer==2.0.12
 click==8.0.3
