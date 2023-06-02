@@ -20,9 +20,11 @@ from pm4py.algo.filtering.pandas.start_activities import start_activities_filter
 from pm4py.algo.filtering.pandas.end_activities import end_activities_filter
 from pm4py.statistics.start_activities.pandas import get
 from pm4py.statistics.end_activities.pandas import get as get_end
-from pm4py import format_dataframe
+from pm4py import format_dataframe, BPMN
 from sqlalchemy.types import Integer, Text, String, DateTime
 from pydantic import BaseModel
+
+from api.routers.query import query_wrapper
 from api.session import verifier, cookie, backend
 from api.schemas import SessionData
 from api.repository import event_log
@@ -51,6 +53,29 @@ router = APIRouter(
 get_db = database.get_db
 engine = database.engine
 engine_event_log = database.engine_log
+
+
+def view_bpmn(bpmn_graph: BPMN, format: str = pm_constants.DEFAULT_FORMAT_GVIZ_VIEW, bgcolor: str = "white"):
+    pm4py.write.write_bpmn(bpmn_graph, os.getcwd() + '/process.bpmn', False)
+    """
+    Views a BPMN graph
+
+    :param bpmn_graph: BPMN graph
+    :param format: Format of the visualization (if html is provided, GraphvizJS is used to render the visualization in an HTML page)
+    :param bgcolor: Background color of the visualization (default: white)
+
+    .. code-block:: python3
+
+        import pm4py
+
+        bpmn_graph = pm4py.discover_bpmn_inductive(dataframe, activity_key='concept:name', case_id_key='case:concept:name', timestamp_key='time:timestamp')
+        pm4py.view_bpmn(bpmn_graph)
+    """
+    format = str(format).lower()
+    from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
+    parameters = bpmn_visualizer.Variants.CLASSIC.value.Parameters
+    gviz = bpmn_visualizer.apply(bpmn_graph, parameters={parameters.FORMAT: format, "bgcolor": bgcolor})
+    return str(gviz)
 
 
 def load_log(process_id: str, log_name: str, parameters=None):
@@ -1291,18 +1316,50 @@ def get_attribute_values(session_id: str = Form(...), project_id: str = Form(...
     return {"attributeValues": []}
 
 
+@router.post('/GetBpmnDiagram')
+def get_bpmn_diagram(  # session: SessionInfo = Depends(get_session),
+        session_id: str = Form(...),
+        project_id: str = Form(...),
+        attribute_key: str = Form('concept:name')):
+
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+
+    bpmn_graph = pm4py.discover_bpmn_inductive(df, activity_key='concept:name', case_id_key='case:concept:name',
+                                               timestamp_key='time:timestamp')
+
+    res = view_bpmn(bpmn_graph)
+    dicto = {
+        'diagram': res
+    }
+
+    return dicto
+
 @router.post('/GetDailyCasesPerMonth')
-def get_daily_cases_per_mounth(session: SessionInfo = Depends(get_session),
-                               project_id: str = Form(...),
-                               attribute_key: str = Form('concept:name')):
-    logging.info("get_attribute_values start session=" + str(session.session_id) + " process=" + str(project_id))
+def get_daily_cases_per_mounth(  # session: SessionInfo = Depends(get_session),
+        session_id: str = Form(...),
+        project_id: str = Form(...),
+        attribute_key: str = Form('concept:name')):
+    # logging.info("get_attribute_values start session=" + str(session.session_id) + " process=" + str(project_id))
 
     # reads the requested attribute
     attribute_key = attribute_key
 
     dicto = {}
 
-    df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe.copy()
+
+    from pandasai import PandasAI
+    from pandasai.llm.openai import OpenAI
+    llm = OpenAI(api_token="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")
+    pandas_ai = PandasAI(llm, conversational=False)
+
+    # res = query_wrapper(df, 'suggest_improvements',
+    #                     parameters={'api_key': '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'})
+
+    # pandas_ai(df, prompt='En cok zaman alan aktiviteler hangileri')
+
+    bpmn_graph = pm4py.discover_bpmn_inductive(df, activity_key='concept:name', case_id_key='case:concept:name',
+                                               timestamp_key='time:timestamp')
 
     td = df['time:timestamp'].max() - df['time:timestamp'].min()
     day_count = td.days
