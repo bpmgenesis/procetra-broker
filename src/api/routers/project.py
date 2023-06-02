@@ -74,7 +74,7 @@ table_name = 'evet_logs'
 @router.post('/CreateProject')
 def create_project(
         session: SessionInfo = Depends(get_session),
-        project_id: Union[str | None] = Form(...),
+        project_id: Union[str , None] = Form(...),
         project_name: str = Form(...),
         admin: str = Form(...),
         is_public: bool = Form(...),
