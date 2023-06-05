@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api import database, schemas, schemas
+from api import database, schemas, schemas, service
 from api.repository import event_log as eventlog_repository
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException, Request, Header
@@ -1316,12 +1316,64 @@ def get_attribute_values(session_id: str = Form(...), project_id: str = Form(...
     return {"attributeValues": []}
 
 
+@router.post('/GetPerformanceDfg')
+def performance_dfg(  # session: SessionInfo = Depends(get_session),
+        session_id: str = Form(...),
+        project_id: str = Form(...),
+        attribute_key: str = Form('concept:name')):
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+    result = service.Discovery.performance_dfg(df)
+    dicto = {
+        'diagram': result
+    }
+
+    return dicto
+
+
+@router.post('/GetDfgDiagram')
+def dfg_diagram(  # session: SessionInfo = Depends(get_session),
+        session_id: str = Form(...),
+        project_id: str = Form(...),
+        attribute_key: str = Form('concept:name')):
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+
+
+    dfg, start_activities, end_activities = pm4py.discover_dfg(df, case_id_key='case:concept:name',
+                                                               activity_key='concept:name',
+                                                               timestamp_key='time:timestamp')
+    # pm4py.view_dfg(dfg, start_activities, end_activities, format='svg')
+    # activities_df = df['concept:name'].nunique()
+    # paths = []
+    # for key in dfg:
+     #   paths.append({
+     #       'path': key[0] + ',' + key[1],
+     #       'frequency': dfg[key]
+     #   })
+
+    format = 'svg'
+    from pm4py.visualization.dfg import visualizer as dfg_visualizer
+    dfg_parameters = dfg_visualizer.Variants.FREQUENCY.value.Parameters
+    parameters = {}
+    parameters[dfg_parameters.FORMAT] = format
+    parameters[dfg_parameters.START_ACTIVITIES] = start_activities
+    parameters[dfg_parameters.END_ACTIVITIES] = end_activities
+    parameters["bgcolor"] = 'white'
+    gviz = dfg_visualizer.apply(dfg, variant=dfg_visualizer.Variants.FREQUENCY,
+                                parameters=parameters)
+
+    res = str(gviz)
+    dicto = {
+        'diagram': res
+    }
+
+    return dicto
+
+
 @router.post('/GetBpmnDiagram')
 def get_bpmn_diagram(  # session: SessionInfo = Depends(get_session),
         session_id: str = Form(...),
         project_id: str = Form(...),
         attribute_key: str = Form('concept:name')):
-
     df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
 
     bpmn_graph = pm4py.discover_bpmn_inductive(df, activity_key='concept:name', case_id_key='case:concept:name',
@@ -1333,6 +1385,7 @@ def get_bpmn_diagram(  # session: SessionInfo = Depends(get_session),
     }
 
     return dicto
+
 
 @router.post('/GetDailyCasesPerMonth')
 def get_daily_cases_per_mounth(  # session: SessionInfo = Depends(get_session),
