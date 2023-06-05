@@ -5,13 +5,11 @@ from typing import Tuple, Union, List, Dict, Any, Optional
 
 
 class Discovery:
-
     @staticmethod
     def performance_dfg(log: DataFrame,
                         activity_key: str = 'concept:name',
                         timestamp_key: str = 'time:timestamp',
-                        case_id_key: str = 'case:concept:name') :
-
+                        case_id_key: str = 'case:concept:name'):
         dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
                                                                    activity_key='concept:name',
                                                                    timestamp_key='time:timestamp')
@@ -30,3 +28,19 @@ class Discovery:
                                     parameters=parameters)
 
         return str(gviz)
+
+
+class Vis:
+    @staticmethod
+    def events_per_time(log: DataFrame,
+                        activity_key: str = 'concept:name',
+                        timestamp_key: str = 'time:timestamp',
+                        case_id_key: str = 'case:concept:name'):
+        from pm4py.statistics.attributes.pandas import get as attributes_get
+        from pm4py.utils import get_properties
+
+        graph = attributes_get.get_kde_date_attribute(log, parameters=get_properties(log, activity_key=activity_key,
+                                                                                     case_id_key=case_id_key,
+                                                                                     timestamp_key=timestamp_key))
+
+        return (graph[0].values.tolist(), graph[1].tolist())

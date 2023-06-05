@@ -25,6 +25,7 @@ from sqlalchemy.types import Integer, Text, String, DateTime
 from pydantic import BaseModel
 
 from api.routers.query import query_wrapper
+from api.service import Vis
 from api.session import verifier, cookie, backend
 from api.schemas import SessionData
 from api.repository import event_log
@@ -392,20 +393,43 @@ async def get_trace_count(
 
 @router.post('/GetEventDataInfo')
 async def get_event_data_info(session_id: str = Form(...), project_id: str = Form(...)):
-    df = await get_df_session_or_database(project_id, session_id)
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+    # df = await get_df_session_or_database(project_id, session_id)
+
+
 
     trace_count = len(df['case:concept:name'].unique())
     event_count = len(df)
 
-    start_dict = {}
+    start_dict = []
     acts = pm4py.get_start_activities(df)
-    for act in acts:
-        start_dict[act] = str(acts[act])
 
-    end_dict = {}
-    acts = pm4py.get_end_activities(df)
+    total_act_count = 0
     for act in acts:
-        end_dict[act] = str(acts[act])
+        total_act_count += acts[act]
+
+    for act in acts:
+        start_dict.append({
+            'activity_name': act,
+            'frequency': str(acts[act]),
+            'frequency_rate': (acts[act] / total_act_count) * 100
+        })
+        # start_dict[act] = str(acts[act])
+
+    end_dict = []
+    acts = pm4py.get_end_activities(df)
+
+    total_act_count = 0
+    for act in acts:
+        total_act_count += acts[act]
+
+    for act in acts:
+        end_dict.append({
+            'activity_name': act,
+            'frequency': str(acts[act]),
+            'frequency_rate': (acts[act] / total_act_count) * 100
+        })
+    # end_dict[act] = str(acts[act])
 
     mf = df.groupby('case:concept:name').agg(
         {"start_timestamp": "min", "time:timestamp": "max", "case:concept:name": "count"})
@@ -428,13 +452,24 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
     act_df["rate"] = act_df["count"].apply(lambda x: 100 * x / float(act_df["count"].sum()))
 
     return {
-        'TraceCount': trace_count,
-        'EventCount': event_count,
-        'Mean': mean,
-        'Median': median,
-        'StartActivities': start_dict,
-        'EndActivities': end_dict,
-        'CaseInfo': case_info
+        "id": project_id,
+        'trace_count': trace_count,
+        'event_count': event_count,
+        'mean': mean,
+        'median': median,
+        'start_activities': start_dict,
+        'end_activities': end_dict,
+        'case_info': case_info
+    }
+
+
+@router.post('/EventsPerTime')
+async def events_per_time(session_id: str = Form(...), project_id: str = Form(...)):
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+    graph_data = Vis.events_per_time(df)
+    return {
+        'x_values': graph_data[0],
+        'y_values': graph_data[1]
     }
 
 
@@ -1115,7 +1150,9 @@ def get_happy_path(session: SessionInfo = Depends(get_session),
 
 
 @router.post('/GetActivities')
-def get_activities(session: SessionInfo = Depends(get_session), project_id: str = Form(...),
+def get_activities(
+        session_id: str = Form(...),
+        project_id: str = Form(...),
                    activity_key: str = Form(...)):
     """
        Gets the Happy Path
@@ -1129,11 +1166,12 @@ def get_activities(session: SessionInfo = Depends(get_session), project_id: str 
     dictio = {}
     list = []
 
+
     try:
         dictio = session_manager.get_handler_for_process_and_session(project_id,
-                                                                     session.session_id).get_attribute_values(
+                                                                    session_id).get_attribute_values(
             activity_key)
-        df = session_manager.get_handler_for_process_and_session(project_id, session.session_id).dataframe
+        df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
         case_count = len(df['case:concept:name'].unique())
         mf = df.groupby(by=['case:concept:name', 'concept:name']).agg({'case:concept:name': 'count'})
         mf.columns = ['count']
@@ -1337,7 +1375,6 @@ def dfg_diagram(  # session: SessionInfo = Depends(get_session),
         attribute_key: str = Form('concept:name')):
     df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
 
-
     dfg, start_activities, end_activities = pm4py.discover_dfg(df, case_id_key='case:concept:name',
                                                                activity_key='concept:name',
                                                                timestamp_key='time:timestamp')
@@ -1345,10 +1382,10 @@ def dfg_diagram(  # session: SessionInfo = Depends(get_session),
     # activities_df = df['concept:name'].nunique()
     # paths = []
     # for key in dfg:
-     #   paths.append({
-     #       'path': key[0] + ',' + key[1],
-     #       'frequency': dfg[key]
-     #   })
+    #   paths.append({
+    #       'path': key[0] + ',' + key[1],
+    #       'frequency': dfg[key]
+    #   })
 
     format = 'svg'
     from pm4py.visualization.dfg import visualizer as dfg_visualizer
