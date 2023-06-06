@@ -64,29 +64,21 @@ def add_filter(session_id: str = Form(...), project_id: str = Form(...), filter:
     # reads the requested process name
     process = project_id
 
-    logging.info("add_filter start session=" + str(session) + " process=" + str(process))
+    # reads the specific filter to add
+    filter = json.loads(filter)
+    # reads all the filters
+    all_filters = json.loads(all_filters)
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            # reads the specific filter to add
-            filter = json.loads(filter)
-            # reads all the filters
-            all_filters = json.loads(all_filters)
+    parameters = {}
+    parameters["force_reload"] = True
 
-            parameters = {}
-            parameters["force_reload"] = True
+    new_handler = session_manager.get_handler_for_process_and_session(process, session,
+                                                                      parameters=parameters).add_filter(
+        filter, all_filters)
+    session_manager.set_handler_for_process_and_session(process, session, new_handler)
 
-            new_handler = session_manager.get_handler_for_process_and_session(process, session,
-                                                                              parameters=parameters).add_filter(
-                filter, all_filters)
-            session_manager.set_handler_for_process_and_session(process, session, new_handler)
 
-            logging.info("add_filter start session=" + str(session) + " process=" + str(process) + " user=" + str(user))
-
-            return {"status": "OK"}
-
-    return {"status": "FAIL"}
+    return {"status": "OK"}
 
 
 @router.post('/RemoveFilter')
@@ -99,34 +91,20 @@ def remove_filter(session_id: str = Form(...), project_id: str = Form(...), filt
     dictio
         Success, or not
     """
-    clean_expired_sessions()
+    # reads the specific filter to add
+    filter = json.loads(filter)
+    # reads all the filters
+    all_filters = json.loads(all_filters)
 
-    # reads the session
-    session = session_id
-    # reads the requested process name
-    process = project_id
+    parameters = {}
+    parameters["force_reload"] = True
 
-    logging.info("remove_filter start session=" + str(session) + " process=" + str(process))
+    new_handler = session_manager.get_handler_for_process_and_session(project_id, session_id,
+                                                                      parameters=parameters).remove_filter(
+        filter, all_filters)
+    session_manager.set_handler_for_process_and_session(project_id, session_id, new_handler)
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            # reads the specific filter to add
-            filter = json.loads('filter')
-            # reads all the filters
-            all_filters = json.loads('all_filters')
 
-            parameters = {}
-            parameters["force_reload"] = True
 
-            new_handler = session_manager.get_handler_for_process_and_session(process, session,
-                                                                              parameters=parameters).remove_filter(
-                filter, all_filters)
-            session_manager.set_handler_for_process_and_session(process, session, new_handler)
+    return {"status": "OK"}
 
-            logging.info(
-                "remove_filter complete session=" + str(session) + " process=" + str(process) + " user=" + str(user))
-
-            return {"status": "OK"}
-
-    return {"status": "FAIL"}

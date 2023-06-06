@@ -1,7 +1,9 @@
 from pm4py.statistics.traces.generic.pandas import case_statistics
 from pm4py.visualization.common.utils import get_base64_from_file
 from pm4py.visualization.graphs import visualizer as graphs_factory
+
 import base64
+
 
 def get_case_duration_svg(dataframe, parameters=None):
     """
@@ -21,7 +23,7 @@ def get_case_duration_svg(dataframe, parameters=None):
         parameters = {}
 
     x, y = case_statistics.get_kde_caseduration(dataframe, parameters)
-    gviz = graphs_factory.apply_plot(x, y, variant="cases", parameters={"format": "svg"})
+    gviz = graphs_factory.apply_plot(x, y, variant=graphs_factory.Variants.CASES, parameters={"format": "svg"})
 
     gviz_base64 = base64.b64encode(str(gviz).encode('utf-8'))
 

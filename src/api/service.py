@@ -43,4 +43,6 @@ class Vis:
                                                                                      case_id_key=case_id_key,
                                                                                      timestamp_key=timestamp_key))
 
-        return (graph[0].values.tolist(), graph[1].tolist())
+
+
+        return ( list(map(lambda n: n.timestamp() * 1000, graph[0].to_pydatetime())), graph[1].tolist())

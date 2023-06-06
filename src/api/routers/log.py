@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 from api import database, schemas, schemas, service
+from api.handlers.parquet.parquet import ParquetHandler
 from api.repository import event_log as eventlog_repository
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException, Request, Header
 from fastapi.responses import FileResponse
+import math
 import html
 import numpy as np
 from fastapi.encoders import jsonable_encoder
@@ -45,6 +47,15 @@ from api.routers.globals import session_manager, clean_expired_sessions, check_s
     get_user_from_session
 
 from session import get_session, SessionInfo
+
+import numpy as np
+
+nat = np.datetime64('NaT')
+
+
+def nat_check(nat):
+    return nat == np.datetime64('NaT')
+
 
 router = APIRouter(
     prefix="/v1",
@@ -393,16 +404,18 @@ async def get_trace_count(
 
 @router.post('/GetEventDataInfo')
 async def get_event_data_info(session_id: str = Form(...), project_id: str = Form(...)):
-    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+    handler = session_manager.get_handler_for_process_and_session(project_id, session_id).add_filter(
+        ['start_activities', ['Mevzuat Onayı-Giriş']], [['start_activities', ['Mevzuat Onayı-Giriş']]])
+
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    df = handler.dataframe
     # df = await get_df_session_or_database(project_id, session_id)
-
-
 
     trace_count = len(df['case:concept:name'].unique())
     event_count = len(df)
 
     start_dict = []
-    acts = pm4py.get_start_activities(df)
+    acts = handler.get_start_activities() #pm4py.get_start_activities(df)
 
     total_act_count = 0
     for act in acts:
@@ -417,7 +430,7 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
         # start_dict[act] = str(acts[act])
 
     end_dict = []
-    acts = pm4py.get_end_activities(df)
+    acts = handler.get_end_activities()#pm4py.get_end_activities(df)
 
     total_act_count = 0
     for act in acts:
@@ -442,8 +455,8 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
 
     case_info = mf.to_dict(orient="records")
 
-    mean = mf["Diff"].mean()
-    median = mf["Diff"].median()
+    mean = mf["Diff"].mean() if not str(mf["Diff"].mean()) == "NaT" else 0
+    median = mf["Diff"].median() if not str(mf["Diff"].median()) == 'NaT' else 0
 
     df['Diff'] = df['time:timestamp'] - df['start_timestamp']
 
@@ -466,6 +479,22 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
 @router.post('/EventsPerTime')
 async def events_per_time(session_id: str = Form(...), project_id: str = Form(...)):
     df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+
+    svg = session_manager.get_handler_for_process_and_session(project_id, session_id).get_events_per_time_svg()
+
+    graph_data = Vis.events_per_time(df)
+    return {
+        'x_values': graph_data[0],
+        'y_values': graph_data[1]
+    }
+
+
+@router.post('/AddFilter')
+async def add_filter(request: Request, session_id: str = Form(...), project_id: str = Form(...)):
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+
+    svg = session_manager.get_handler_for_process_and_session(project_id, session_id).get_events_per_time_svg()
+
     graph_data = Vis.events_per_time(df)
     return {
         'x_values': graph_data[0],
@@ -901,7 +930,7 @@ def get_events(session_id: str = Form(...), process_id: str = Form(...)):
 
 
 @router.post('/GetCaseDuration')
-def get_case_duration(session_id: str = Form(...), process_id: str = Form(...)):
+def get_case_duration(session_id: str = Form(...), project_id: str = Form(...)):
     """
     Gets the Case Duration graph
     Returns
@@ -910,38 +939,24 @@ def get_case_duration(session_id: str = Form(...), process_id: str = Form(...)):
         JSONified dictionary that contains in the 'base64' entry the SVG representation
         of the case duration graph
     """
-    clean_expired_sessions()
-
-    # reads the session
-    session = session_id
-    # reads the requested process name
-    process = process_id
-
-    logging.info("get_case_duration start session=" + str(session) + " process=" + str(process))
 
     dictio = {}
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            Commons.semaphore_matplot.acquire()
-            try:
-                base64, gviz_base64, ret = session_manager.get_handler_for_process_and_session(process,
-                                                                                               session).get_case_duration_svg()
-                data_x = []
-                data_y = []
-                for i in range(len(ret)):
-                    data_x.append(ret[i][0])
-                    data_y.append(ret[i][1])
+    Commons.semaphore_matplot.acquire()
+    try:
+        base64, gviz_base64, ret = session_manager.get_handler_for_process_and_session(project_id,
+                                                                                       session_id).get_case_duration_svg()
+        data_x = []
+        data_y = []
+        for i in range(len(ret)):
+            data_x.append(ret[i][0])
+            data_y.append(ret[i][1])
 
-                dictio = {"base64": base64.decode('utf-8'), "gviz_base64": gviz_base64.decode('utf-8'), "points": ret,
-                          "points_x": data_x, "points_y": data_y}
-            except:
-                logging.error(traceback.format_exc())
-                dictio = {"base64": "", "gviz_base64": "", "points": [], "points_x": [], "points_y": []}
-            Commons.semaphore_matplot.release()
-
-        logging.info(
-            "get_case_duration start session=" + str(session) + " process=" + str(process) + " user=" + str(user))
+        dictio = {"base64": base64.decode('utf-8'), "gviz_base64": gviz_base64.decode('utf-8'), "points": ret,
+                  "points_x": data_x, "points_y": data_y}
+    except:
+        logging.error(traceback.format_exc())
+        dictio = {"base64": "", "gviz_base64": "", "points": [], "points_x": [], "points_y": []}
+    Commons.semaphore_matplot.release()
 
     return dictio
 
@@ -1153,7 +1168,7 @@ def get_happy_path(session: SessionInfo = Depends(get_session),
 def get_activities(
         session_id: str = Form(...),
         project_id: str = Form(...),
-                   activity_key: str = Form(...)):
+        activity_key: str = Form(...)):
     """
        Gets the Happy Path
        Returns
@@ -1166,10 +1181,9 @@ def get_activities(
     dictio = {}
     list = []
 
-
     try:
         dictio = session_manager.get_handler_for_process_and_session(project_id,
-                                                                    session_id).get_attribute_values(
+                                                                     session_id).get_attribute_values(
             activity_key)
         df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
         case_count = len(df['case:concept:name'].unique())
