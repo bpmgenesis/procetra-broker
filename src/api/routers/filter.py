@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from api import database, schemas, schemas
+from api.handlers.parquet.parquet import ParquetHandler
 from api.repository import event_log as eventlog_repository
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException
@@ -47,6 +48,25 @@ router = APIRouter(
 )
 
 
+@router.post('/GetAllFilters')
+def get_all_filters(session_id: str = Form(...), project_id: str = Form(...)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+
+    # import pm4py
+    #
+    # from pm4py.objects.conversion.process_tree import converter as tree_converter
+    #
+    # from pm4py.objects.bpmn.layout import layouter as bpmn_layouter
+    # from pm4py.objects.bpmn.exporter import exporter as bpmn_exporter
+    #
+    # tree = pm4py.discover_process_tree_inductive(handler.dataframe)
+    # bpmn_graph = tree_converter.apply(tree, variant=tree_converter.Variants.TO_BPMN)
+    # bpmn_graph = bpmn_layouter.apply(bpmn_graph)
+    # bpmn_exporter.apply(bpmn_graph, os.path.join(os.getcwd(), "running-example.bpmn"))
+
+    return handler.filters_chain
+
+
 @router.post('/AddFilter')
 def add_filter(session_id: str = Form(...), project_id: str = Form(...), filter: str = Form(...),
                all_filters: str = Form(...)):
@@ -57,7 +77,8 @@ def add_filter(session_id: str = Form(...), project_id: str = Form(...), filter:
     dictio
         Success, or not
     """
-    clean_expired_sessions()
+
+
 
     # reads the session
     session = session_id
@@ -77,7 +98,6 @@ def add_filter(session_id: str = Form(...), project_id: str = Form(...), filter:
         filter, all_filters)
     session_manager.set_handler_for_process_and_session(process, session, new_handler)
 
-
     return {"status": "OK"}
 
 
@@ -91,9 +111,12 @@ def remove_filter(session_id: str = Form(...), project_id: str = Form(...), filt
     dictio
         Success, or not
     """
+
+
     # reads the specific filter to add
     filter = json.loads(filter)
     # reads all the filters
+
     all_filters = json.loads(all_filters)
 
     parameters = {}
@@ -104,7 +127,4 @@ def remove_filter(session_id: str = Form(...), project_id: str = Form(...), filt
         filter, all_filters)
     session_manager.set_handler_for_process_and_session(project_id, session_id, new_handler)
 
-
-
     return {"status": "OK"}
-
