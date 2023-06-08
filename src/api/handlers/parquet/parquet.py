@@ -407,7 +407,7 @@ class ParquetHandler(object):
 
             self.variants_df = case_statistics.get_variants_df_with_case_duration(dataframe,
                                                                                   parameters=parameters)
-           # self.save_most_common_variant(self.variants_df)
+            self.save_most_common_variant(self.variants_df)
 
     def get_variants_df(self):
         """
@@ -499,10 +499,10 @@ class ParquetHandler(object):
         if variants_list:
             best_var_idx = 0
             for i in range(len(variants_list)):
-                if len(variants_list[i]["variant"].split(",")) > 1:
+                if len(variants_list[i]["variant"]) > 1:
                     best_var_idx = i
                     break
-            self.most_common_variant = variants_list[best_var_idx]["variant"].split(",")
+            self.most_common_variant = variants_list[best_var_idx]["variant"]
             for i in range(len(self.most_common_variant) - 1):
                 self.most_common_paths.append((self.most_common_variant[i], self.most_common_variant[i + 1]))
 

@@ -107,12 +107,12 @@ def load_log(process_id: str, log_name: str, parameters=None):
 
 import sqlite3
 
-conn_event_logs = sqlite3.connect(Configuration.event_log_db_path)
-cursor_event_logs = conn_event_logs.cursor()
-cursor_event_logs.execute("SELECT LOG_NAME, LOG_PATH FROM EVENT_LOGS WHERE LOADED_BOOT = 1")
-for result in cursor_event_logs.fetchall():
-    load_log(str(result[0]), str(result[1]))
-conn_event_logs.close()
+# conn_event_logs = sqlite3.connect(Configuration.event_log_db_path)
+# cursor_event_logs = conn_event_logs.cursor()
+# cursor_event_logs.execute("SELECT LOG_NAME, LOG_PATH FROM EVENT_LOGS WHERE LOADED_BOOT = 1")
+# for result in cursor_event_logs.fetchall():
+#     load_log(str(result[0]), str(result[1]))
+# conn_event_logs.close()
 
 
 async def get_df_session_or_database(project_id: str, session_id: UUID):
@@ -1114,7 +1114,7 @@ def _get_process_schema(session_id: str = Form(...), project_id: str = Form(...)
 
 
 @router.post('/GetHappyPath')
-def get_happy_path(session: SessionInfo = Depends(get_session),
+def get_happy_path(session_id:  str = Form(...),
                    project_id: str = Form(...)):
     """
        Gets the Happy Path
@@ -1124,36 +1124,33 @@ def get_happy_path(session: SessionInfo = Depends(get_session),
            JSONified dictionary that contains in the 'base64' entry the SVG representation
            of the case duration grap
     """
-
-    logging.info("get_case_duration start session=" + str(session.session_id) + " process=" + str(project_id))
-
-    dictio = {}
-    list = []
-
     try:
-        list = session_manager.get_handler_for_process_and_session(project_id,
-                                                                   session.session_id).get_most_common_variant()
+
+        handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id,
+                                                                   session_id)
+        handler.get_variants_df()
+        list = handler.get_most_common_variant()
 
         variants_df = session_manager.get_handler_for_process_and_session(project_id,
-                                                                          session.session_id).get_variants_df()
+                                                                          session_id).get_variants_df()
 
         variants_df = variants_df.groupby('variant').agg(
             {'variant': "count", 'caseDuration': ['sum', 'mean', 'min', 'max']})
 
-        variants_df.columns = ["count", "caseDuration_sum", "caseDuration_mean", "caseDuration_min",
-                               "caseDuration_max"]
+        variants_df.columns = ["count", "case_duration_sum", "case_duration_mean", "case_duration_min",
+                               "case_duration_max"]
         variants_df['variant'] = variants_df.index
         variants_df["count_sum"] = variants_df["count"].sum()
-        variants_df["caseDuration_all_sum"] = variants_df["caseDuration_sum"].sum()
-        variants_df["caseDuration_all_mean"] = variants_df["caseDuration_sum"].mean()
+        variants_df["case_duration_all_sum"] = variants_df["case_duration_sum"].sum()
+        variants_df["case_duration_all_mean"] = variants_df["case_duration_sum"].mean()
 
         variants_df["rate_count"] = variants_df["count"].apply(
             lambda x: 100 * x / float(variants_df["count"].sum()))
-        variants_df["rate_duration"] = variants_df["caseDuration_sum"].apply(
-            lambda x: 100 * x / float(variants_df["caseDuration_sum"].sum()))
+        variants_df["rate_duration"] = variants_df["case_duration_sum"].apply(
+            lambda x: 100 * x / float(variants_df["case_duration_sum"].sum()))
         variants_df.sort_values(by='count', ascending=False, inplace=True)
 
-        result_df = variants_df[variants_df['variant'] == ",".join(list)]
+        result_df = variants_df[variants_df['variant'] == list]
 
         dictio = result_df.to_dict(orient="records")[0]
 
