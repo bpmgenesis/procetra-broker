@@ -107,6 +107,7 @@ def load_log(process_id: str, log_name: str, parameters=None):
 
 import sqlite3
 
+
 # conn_event_logs = sqlite3.connect(Configuration.event_log_db_path)
 # cursor_event_logs = conn_event_logs.cursor()
 # cursor_event_logs.execute("SELECT LOG_NAME, LOG_PATH FROM EVENT_LOGS WHERE LOADED_BOOT = 1")
@@ -404,9 +405,6 @@ async def get_trace_count(
 
 @router.post('/GetEventDataInfo')
 async def get_event_data_info(session_id: str = Form(...), project_id: str = Form(...)):
-    handler = session_manager.get_handler_for_process_and_session(project_id, session_id).add_filter(
-        ['start_activities', ['Mevzuat Onayı-Giriş']], [['start_activities', ['Mevzuat Onayı-Giriş']]])
-
     handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
     df = handler.dataframe
     # df = await get_df_session_or_database(project_id, session_id)
@@ -415,7 +413,7 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
     event_count = len(df)
 
     start_dict = []
-    acts = handler.get_start_activities() #pm4py.get_start_activities(df)
+    acts = handler.get_start_activities()  # pm4py.get_start_activities(df)
 
     total_act_count = 0
     for act in acts:
@@ -430,7 +428,7 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
         # start_dict[act] = str(acts[act])
 
     end_dict = []
-    acts = handler.get_end_activities()#pm4py.get_end_activities(df)
+    acts = handler.get_end_activities()  # pm4py.get_end_activities(df)
 
     total_act_count = 0
     for act in acts:
@@ -455,6 +453,8 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
 
     case_info = mf.to_dict(orient="records")
 
+    max = mf["Diff"].max()
+    min = mf["Diff"].min()
     mean = mf["Diff"].mean() if not str(mf["Diff"].mean()) == "NaT" else 0
     median = mf["Diff"].median() if not str(mf["Diff"].median()) == 'NaT' else 0
 
@@ -469,6 +469,8 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
         'trace_count': trace_count,
         'event_count': event_count,
         'mean': mean,
+        'max': max,
+        'min': min,
         'median': median,
         'start_activities': start_dict,
         'end_activities': end_dict,
@@ -480,12 +482,21 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
 async def events_per_time(session_id: str = Form(...), project_id: str = Form(...)):
     df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
 
-    svg = session_manager.get_handler_for_process_and_session(project_id, session_id).get_events_per_time_svg()
+    # svg = session_manager.get_handler_for_process_and_session(project_id, session_id).get_events_per_time_svg()
 
     graph_data = Vis.events_per_time(df)
     return {
         'x_values': graph_data[0],
         'y_values': graph_data[1]
+    }
+
+
+@router.post('/GetMainMetrics')
+async def get_main_metrics(session_id: str = Form(...), project_id: str = Form(...)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+
+    return {
+        'median_case_duration': handler.get_median_case_duration(),
     }
 
 
@@ -590,7 +601,6 @@ def get_all_variants(session_id: str = Form(...), project_id: str = Form(...),
     dictio
         JSONified dictionary that contains in the 'variants' entry the list of variants
     """
-    clean_expired_sessions()
 
     # reads the session
     session = session_id
@@ -599,28 +609,20 @@ def get_all_variants(session_id: str = Form(...), project_id: str = Form(...),
     # reads the maximum number of variants to return
     max_no_variants = 100
 
-    logging.info("get_all_variants start session=" + str(session) + " process=" + str(process))
+    parameters = {
+        "max_no_variants": int(max_no_variants),
+        pm_constants.PARAMETER_CONSTANT_CASEID_KEY: 'case:concept:name',
+        pm_constants.PARAMETER_CONSTANT_ACTIVITY_KEY: 'concept:name'
 
-    dictio = {}
+    }
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            parameters = {
-                "max_no_variants": int(max_no_variants),
-                pm_constants.PARAMETER_CONSTANT_CASEID_KEY: 'case:concept:name',
-                pm_constants.PARAMETER_CONSTANT_ACTIVITY_KEY: 'concept:name'
+    variants, log_summary = session_manager.get_handler_for_process_and_session(process,
+                                                                                session).get_variant_statistics(
+        parameters=parameters)
 
-            }
-
-            variants, log_summary = session_manager.get_handler_for_process_and_session(process,
-                                                                                        session).get_variant_statistics(
-                parameters=parameters)
-            dictio = {"variants": variants}
-            for key in log_summary:
-                dictio[key] = log_summary[key]
-        logging.info(
-            "get_all_variants complete session=" + str(session) + " process=" + str(process) + " user=" + str(user))
+    dictio = {"variants": variants}
+    for key in log_summary:
+        dictio[key] = log_summary[key]
 
     return dictio
 
@@ -634,7 +636,6 @@ def get_variants(session_id: str = Form(...), project_id: str = Form(...), db: S
     dictio
         JSONified dictionary that contains in the 'variants' entry the list of variants
     """
-    clean_expired_sessions()
 
     # reads the session
     session = session_id
@@ -643,44 +644,37 @@ def get_variants(session_id: str = Form(...), project_id: str = Form(...), db: S
     # reads the maximum number of variants to return
     max_no_variants = 100
 
-    logging.info("get_all_variants start session=" + str(session) + " process=" + str(process))
+    parameters = {
+        pm_constants.PARAMETER_CONSTANT_CASEID_KEY: 'case:concept:name',
+        pm_constants.PARAMETER_CONSTANT_ACTIVITY_KEY: 'concept:name'
 
-    dictio = {}
+    }
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            parameters = {
-                pm_constants.PARAMETER_CONSTANT_CASEID_KEY: 'case:concept:name',
-                pm_constants.PARAMETER_CONSTANT_ACTIVITY_KEY: 'concept:name'
+    # new_handler = session_manager.get_handler_for_process_and_session(process,
+    #                                                                   session).add_filter(
+    #     ['start_activities', ['Inbound Call']],
+    #     [['start_activities', ['Inbound Call']], ['end_activities', ['Handle Case']]])
+    #
+    # session_manager.set_handler_for_process_and_session(process, session, new_handler)
 
-            }
+    variants_df = session_manager.get_handler_for_process_and_session(process,
+                                                                      session).get_variants_df()
 
-            # new_handler = session_manager.get_handler_for_process_and_session(process,
-            #                                                                   session).add_filter(
-            #     ['start_activities', ['Inbound Call']],
-            #     [['start_activities', ['Inbound Call']], ['end_activities', ['Handle Case']]])
-            #
-            # session_manager.set_handler_for_process_and_session(process, session, new_handler)
+    variants_df = variants_df.groupby('variant').agg(
+        {'variant': "count", 'caseDuration': ['sum', 'mean', 'min', 'max']})
 
-            variants_df = session_manager.get_handler_for_process_and_session(process,
-                                                                              session).get_variants_df()
+    variants_df.columns = ["count", "caseDuration_sum", "caseDuration_mean", "caseDuration_min",
+                           "caseDuration_max"]
+    variants_df['variant'] = variants_df.index
+    variants_df["rate_count"] = variants_df["count"].apply(
+        lambda x: 100 * x / float(variants_df["count"].sum()))
+    variants_df["rate_duration"] = variants_df["caseDuration_sum"].apply(
+        lambda x: 100 * x / float(variants_df["caseDuration_sum"].sum()))
+    variants_df.sort_values(by='count', ascending=False, inplace=True)
 
-            variants_df = variants_df.groupby('variant').agg(
-                {'variant': "count", 'caseDuration': ['sum', 'mean', 'min', 'max']})
+    result = variants_df.to_dict(orient="records")
 
-            variants_df.columns = ["count", "caseDuration_sum", "caseDuration_mean", "caseDuration_min",
-                                   "caseDuration_max"]
-            variants_df['variant'] = variants_df.index
-            variants_df["rate_count"] = variants_df["count"].apply(
-                lambda x: 100 * x / float(variants_df["count"].sum()))
-            variants_df["rate_duration"] = variants_df["caseDuration_sum"].apply(
-                lambda x: 100 * x / float(variants_df["caseDuration_sum"].sum()))
-            variants_df.sort_values(by='count', ascending=False, inplace=True)
-
-            dictio = {"variants": variants_df.to_dict(orient="records")}
-
-    return dictio
+    return result
 
 
 @router.post('/GetDFG', dependencies=[Depends(cookie)])
@@ -1114,7 +1108,7 @@ def _get_process_schema(session_id: str = Form(...), project_id: str = Form(...)
 
 
 @router.post('/GetHappyPath')
-def get_happy_path(session_id:  str = Form(...),
+def get_happy_path(session_id: str = Form(...),
                    project_id: str = Form(...)):
     """
        Gets the Happy Path
@@ -1127,7 +1121,7 @@ def get_happy_path(session_id:  str = Form(...),
     try:
 
         handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id,
-                                                                   session_id)
+                                                                                      session_id)
         handler.get_variants_df()
         list = handler.get_most_common_variant()
 

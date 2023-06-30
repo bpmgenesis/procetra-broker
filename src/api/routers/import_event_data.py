@@ -91,11 +91,13 @@ def prepare_dataset(source_df, case_column_name: str, activity_column_name: str,
         raise Exception("Error occured in setting up case:name")
 
     # formatting dataset
+    # format = ''%d.%m.%y %H:%M'
+    format = '%Y-%m-%dT%H:%M:%S.%fZ'
     source_df = format_dataframe(source_df, case_id=case_id, activity_key=activity_key,
                                  timestamp_key=timestamp_key, start_timestamp_key=start_timestamp_key,
-                                 timest_format='%d.%m.%y %H:%M')
+                                 timest_format=format)
 
-    source_df = dataframe_utils.convert_timestamp_columns_in_df(source_df, timest_format='%d.%m.%y %H:%M')
+    source_df = dataframe_utils.convert_timestamp_columns_in_df(source_df, timest_format=format)
 
     # rename and convert cost field
     if cost_key is not None:
@@ -151,4 +153,4 @@ async def load_csv(
             'log_id': log_id,
         }
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))

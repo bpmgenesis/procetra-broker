@@ -32,3 +32,26 @@ def get_case_duration_svg(dataframe, parameters=None):
         ret.append((x[i], y[i]))
 
     return get_base64_from_file(gviz), gviz_base64, ret
+
+
+def get_median_case_duration(dataframe, parameters=None):
+    """
+    Gets the median case duration
+    Parameters
+    -------------
+    dataframe
+        Dataframe
+    parameters
+        Possible parameters of the algorithm
+    Returns
+    -------------
+    median value
+        Case duration median value
+    """
+    if parameters is None:
+        parameters = {}
+
+    median_case_duration = case_statistics.get_median_case_duration(dataframe, parameters)
+
+    return median_case_duration
+

@@ -619,6 +619,12 @@ class ParquetHandler(object):
 
         return numeric_attribute.get_numeric_attribute_distr_svg(self.dataframe, attribute, parameters=parameters)
 
+    def get_median_case_duration(self,parameters=None):
+        if parameters is None:
+            parameters = {}
+
+        return case_duration.get_median_case_duration(self.get_reduced_dataframe(), parameters=parameters)
+
     def get_case_duration_svg(self, parameters=None):
         """
         Gets the SVG of the case duration
