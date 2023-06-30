@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from api import database, schemas, schemas
+from api.handlers.parquet.parquet import ParquetHandler
 from api.repository import event_log as eventlog_repository
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException
@@ -18,6 +19,8 @@ from pm4py.objects.conversion.log import converter as log_converter
 from pm4py import format_dataframe
 from sqlalchemy.types import Integer, Text, String, DateTime
 from pydantic import BaseModel
+
+from api.routers.globals import session_manager
 from api.session import verifier, cookie, backend
 from api.schemas import SessionData
 from api.repository import event_log
@@ -58,8 +61,11 @@ async def get_statistics(log_id: str = Form(...), activity_name: str = Form(...)
 
 
 @router.post('/GetActivityStatistics')
-async def get_activity_statistics(log_id: str = Form(...), db: Session = Depends(get_db)):
-    mf = df = pd.read_sql_table(log_id, con=engine_event_log)
+async def get_activity_statistics(session_id: str = Form(...), project_id: str = Form(...), db: Session = Depends(get_db)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    mf = df = handler.dataframe
+
+
 
     if 'start_timestamp' in df.columns:
         df["time:timestamp"] = pd.to_datetime(df["time:timestamp"])
