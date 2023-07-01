@@ -1289,26 +1289,16 @@ def get_all_variants_and_cases(session_id: str = Form(...), project_id: str = Fo
     # reads the maximum number of variants to return
     max_no_variants = constants.MAX_NO_VARIANTS_TO_RETURN  # request.args.get('max_no_variants', default=constants.MAX_NO_VARIANTS_TO_RETURN, type=int)
 
-    logging.info("get_all_variants_and_cases start session=" + str(session) + " process=" + str(process))
+    parameters = {}
+    parameters["max_no_variants"] = int(max_no_variants)
 
-    dictio = {}
+    handler = session_manager.get_handler_for_process_and_session(process, session)
+    variants, log_summary = handler.get_variant_statistics(parameters=parameters)
+    cases_list, log_summary = handler.get_case_statistics(parameters=parameters)
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
-            parameters = {}
-            parameters["max_no_variants"] = int(max_no_variants)
-
-            handler = session_manager.get_handler_for_process_and_session(process, session)
-            variants, log_summary = handler.get_variant_statistics(parameters=parameters)
-            cases_list, log_summary = handler.get_case_statistics(parameters=parameters)
-
-            dictio = {"variants": variants, "cases": cases_list}
-            for key in log_summary:
-                dictio[key] = log_summary[key]
-        logging.info(
-            "get_all_variants_and_cases complete session=" + str(session) + " process=" + str(process) + " user=" + str(
-                user))
+    dictio = {"variants": variants, "cases": cases_list}
+    for key in log_summary:
+        dictio[key] = log_summary[key]
 
     return dictio
 
