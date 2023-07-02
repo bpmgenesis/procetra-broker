@@ -115,8 +115,10 @@ async def get_activity_statistics(session_id: str = Form(...), project_id: str =
 
 
 @router.post('/GetEventsOverTime')
-async def get_events_overtime(log_id: str = Form(...), db: Session = Depends(get_db)):
-    df = pd.read_sql_table(log_id, con=engine_event_log)
+async def get_events_overtime(session_id: str = Form(...), project_id: str = Form(...), db: Session = Depends(get_db)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    df = handler.dataframe
+
     df['start_timestamp'] = df['start_timestamp'].dt.floor('s')
     df['time:timestamp'] = df['time:timestamp'].dt.floor('s')
 
