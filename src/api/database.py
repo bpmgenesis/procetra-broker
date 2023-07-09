@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from fastapi import Form
+from fastapi import Form, Request
 from pathlib import Path
 import os
+from pymongo import MongoClient
 
 SQLALCHAMY_DATABASE_URL = 'sqlite:///./db/procetra.db'
 SQLALCHAMY_EVENT_LOG_DATABASE_URL = 'sqlite:///./files/databases/organizations/{org_name}/event_data/{log_id}.db'
@@ -21,7 +22,13 @@ Base = declarative_base()
 OrgDbBase = declarative_base()
 
 
-
+def get_mongo_db(request: Request):
+    client = MongoClient(
+        'mongodb+srv://doadmin:053j72a8NtCcb1e4@db-mongo-9740cdb5.mongo.ondigitalocean.com/admin?tlsInsecure=true&authSource=admin&replicaSet=db-mongo')
+    try:
+        yield client['procetra']
+    finally:
+        client.close()
 def get_db():
     db = SessionLocal()
     try:
