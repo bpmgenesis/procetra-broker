@@ -405,77 +405,80 @@ async def get_trace_count(
 
 @router.post('/GetEventDataInfo')
 async def get_event_data_info(session_id: str = Form(...), project_id: str = Form(...)):
-    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
-    df = handler.dataframe
-    # df = await get_df_session_or_database(project_id, session_id)
+    try:
+        handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+        df = handler.dataframe
+        # df = await get_df_session_or_database(project_id, session_id)
 
-    trace_count = len(df['case:concept:name'].unique())
-    event_count = len(df)
+        trace_count = len(df['case:concept:name'].unique())
+        event_count = len(df)
 
-    start_dict = []
-    acts = handler.get_start_activities()  # pm4py.get_start_activities(df)
+        start_dict = []
+        acts = handler.get_start_activities()  # pm4py.get_start_activities(df)
 
-    total_act_count = 0
-    for act in acts:
-        total_act_count += acts[act]
+        total_act_count = 0
+        for act in acts:
+            total_act_count += acts[act]
 
-    for act in acts:
-        start_dict.append({
-            'activity_name': act,
-            'frequency': str(acts[act]),
-            'frequency_rate': (acts[act] / total_act_count) * 100
-        })
-        # start_dict[act] = str(acts[act])
+        for act in acts:
+            start_dict.append({
+                'activity_name': act,
+                'frequency': str(acts[act]),
+                'frequency_rate': (acts[act] / total_act_count) * 100
+            })
+            # start_dict[act] = str(acts[act])
 
-    end_dict = []
-    acts = handler.get_end_activities()  # pm4py.get_end_activities(df)
+        end_dict = []
+        acts = handler.get_end_activities()  # pm4py.get_end_activities(df)
 
-    total_act_count = 0
-    for act in acts:
-        total_act_count += acts[act]
+        total_act_count = 0
+        for act in acts:
+            total_act_count += acts[act]
 
-    for act in acts:
-        end_dict.append({
-            'activity_name': act,
-            'frequency': str(acts[act]),
-            'frequency_rate': (acts[act] / total_act_count) * 100
-        })
-    # end_dict[act] = str(acts[act])
+        for act in acts:
+            end_dict.append({
+                'activity_name': act,
+                'frequency': str(acts[act]),
+                'frequency_rate': (acts[act] / total_act_count) * 100
+            })
+        # end_dict[act] = str(acts[act])
 
-    mf = df.groupby('case:concept:name').agg(
-        {"start_timestamp": "min", "time:timestamp": "max", "case:concept:name": "count"})
+        mf = df.groupby('case:concept:name').agg(
+            {"start_timestamp": "min", "time:timestamp": "max", "case:concept:name": "count"})
 
-    mf.columns = ["min", "max", "count"]
+        mf.columns = ["min", "max", "count"]
 
-    mf["Diff"] = mf["max"] - mf["min"]
+        mf["Diff"] = mf["max"] - mf["min"]
 
-    mf['case:concept:name'] = mf.index
+        mf['case:concept:name'] = mf.index
 
-    case_info = mf.to_dict(orient="records")
+        case_info = mf.to_dict(orient="records")
 
-    max = mf["Diff"].max()
-    min = mf["Diff"].min()
-    mean = mf["Diff"].mean() if not str(mf["Diff"].mean()) == "NaT" else 0
-    median = mf["Diff"].median() if not str(mf["Diff"].median()) == 'NaT' else 0
+        max = mf["Diff"].max()
+        min = mf["Diff"].min()
+        mean = mf["Diff"].mean() if not str(mf["Diff"].mean()) == "NaT" else 0
+        median = mf["Diff"].median() if not str(mf["Diff"].median()) == 'NaT' else 0
 
-    df['Diff'] = df['time:timestamp'] - df['start_timestamp']
+        df['Diff'] = df['time:timestamp'] - df['start_timestamp']
 
-    act_df = df.groupby('concept:name').agg({"concept:name": "count", "Diff": ["mean", "median"]})
-    act_df.columns = ["count", "mean", "median"]
-    act_df["rate"] = act_df["count"].apply(lambda x: 100 * x / float(act_df["count"].sum()))
+        act_df = df.groupby('concept:name').agg({"concept:name": "count", "Diff": ["mean", "median"]})
+        act_df.columns = ["count", "mean", "median"]
+        act_df["rate"] = act_df["count"].apply(lambda x: 100 * x / float(act_df["count"].sum()))
 
-    return {
-        "id": project_id,
-        'trace_count': trace_count,
-        'event_count': event_count,
-        'mean': mean,
-        'max': max,
-        'min': min,
-        'median': median,
-        'start_activities': start_dict,
-        'end_activities': end_dict,
-        'case_info': case_info
-    }
+        return {
+            "id": project_id,
+            'trace_count': trace_count,
+            'event_count': event_count,
+            'mean': mean,
+            'max': max,
+            'min': min,
+            'median': median,
+            'start_activities': start_dict,
+            'end_activities': end_dict,
+            'case_info': case_info
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post('/EventsPerTime')
