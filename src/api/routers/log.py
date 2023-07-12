@@ -447,6 +447,7 @@ async def get_event_data_info(session_id: str = Form(...), project_id: str = For
             {"start_timestamp": "min", "time:timestamp": "max", "case:concept:name": "count"})
 
         mf.columns = ["min", "max", "count"]
+        mf['min'] = pd.to_datetime(mf['min'])
 
         mf["Diff"] = mf["max"] - mf["min"]
 
