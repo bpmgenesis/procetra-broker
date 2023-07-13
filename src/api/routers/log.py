@@ -1247,30 +1247,20 @@ def get_log_summary(session_id: str = Form(...), project_id: str = Form(...)):
        log_summary
            Log summary
        """
-    clean_expired_sessions()
 
     # reads the session
     session = session_id
     # reads the requested process name
     process = project_id
 
-    logging.info("get_log_summary start session=" + str(session) + " process=" + str(process))
-
     dictio = {}
 
-    if check_session_validity(session):
-        user = get_user_from_session(session)
-        if session_manager.check_user_log_visibility(user, process):
+    try:
+        handler: ParquetHandler = session_manager.get_handler_for_process_and_session(process, session);
+        dictio = handler.get_log_summary_dictio()
 
-            try:
-                dictio = session_manager.get_handler_for_process_and_session(process, session).get_log_summary_dictio()
-
-            except:
-                logging.error(traceback.format_exc())
-                dictio = {}
-
-        logging.info(
-            "get_log_summary complete session=" + str(session) + " process=" + str(process) + " user=" + str(user))
+    except:
+        dictio = {}
 
     return dictio
 
@@ -1547,6 +1537,10 @@ def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post('/GetEventsDistribution')
+def get_events_distribution(session_id: str = Form(...), project_id: str = Form(...)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    return handler.get_events_distribution()
 @router.post('/GetBottlenecks')
 def get_bottlenecks(session_id: str = Form(...), project_id: str = Form(...),
                     attribute_key: str = Form('concept:name')):

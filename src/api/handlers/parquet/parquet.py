@@ -4,12 +4,14 @@ from pm4py.algo.filtering.pandas.end_activities import end_activities_filter
 from pm4py.algo.filtering.pandas.start_activities import start_activities_filter
 from pm4py.algo.filtering.pandas.variants import variants_filter
 from pm4py.objects.conversion.log import converter as conv_factory
-#from pm4py.objects.log.adapters.pandas import csv_import_adapter
-from pm4py.objects.log.exporter.xes.variants  import etree_xes_exp
-#from pm4py.objects.log.importer.parquet import factory as parquet_importer
+# from pm4py.objects.log.adapters.pandas import csv_import_adapter
+from pm4py.objects.log.exporter.xes.variants import etree_xes_exp
+# from pm4py.objects.log.importer.parquet import factory as parquet_importer
 from pm4py.objects.log.util import xes
 from pm4py.statistics.traces.generic.pandas import case_statistics
 from pm4py.util import constants
+from pm4py.statistics.attributes.pandas import get as attr_get
+
 import pandas as pd
 
 from api.util import constants as ws_constants
@@ -39,7 +41,6 @@ import math
 from api import database, schemas, schemas
 
 get_db = database.get_db
-
 
 
 class ParquetHandler(object):
@@ -196,7 +197,7 @@ class ParquetHandler(object):
             self.calculate_cases_number()
             self.calculate_events_number()
 
-    def build_from_org_db(self,org_name: str, log_id: str, parameters=None):
+    def build_from_org_db(self, org_name: str, log_id: str, parameters=None):
         """
         Builds the handler from the specified path to CSV file
         Parameters
@@ -598,7 +599,9 @@ class ParquetHandler(object):
         if self.variants_df is not None:
             parameters["variants_df"] = self.variants_df
 
-        return list(process_schema_factory.apply(self.get_reduced_dataframe(), variant=variant, parameters=parameters)) + [self.get_log_summary_dictio()]
+        return list(
+            process_schema_factory.apply(self.get_reduced_dataframe(), variant=variant, parameters=parameters)) + [
+                   self.get_log_summary_dictio()]
 
     def get_numeric_attribute_svg(self, attribute, parameters=None):
         """
@@ -619,7 +622,7 @@ class ParquetHandler(object):
 
         return numeric_attribute.get_numeric_attribute_distr_svg(self.dataframe, attribute, parameters=parameters)
 
-    def get_median_case_duration(self,parameters=None):
+    def get_median_case_duration(self, parameters=None):
         if parameters is None:
             parameters = {}
 
@@ -775,10 +778,12 @@ class ParquetHandler(object):
             filtered_dataframe = variants_filter.apply(self.get_reduced_dataframe(), [var_to_filter],
                                                        parameters=parameters)
             return [casestats.include_key_in_value_list(
-                case_statistics.get_cases_description(filtered_dataframe, parameters=parameters))] + [self.get_log_summary_dictio()]
+                case_statistics.get_cases_description(filtered_dataframe, parameters=parameters))] + [
+                       self.get_log_summary_dictio()]
         else:
             return [casestats.include_key_in_value_list(
-                case_statistics.get_cases_description(self.get_reduced_dataframe(), parameters=parameters))] + [self.get_log_summary_dictio()]
+                case_statistics.get_cases_description(self.get_reduced_dataframe(), parameters=parameters))] + [
+                       self.get_log_summary_dictio()]
 
     def get_events(self, caseid, parameters=None):
         """
@@ -879,7 +884,7 @@ class ParquetHandler(object):
             return_dict[str(key)] = int(initial_dict[key])
         return return_dict
 
-    def get_paths(self, attribute_key,measure='frequency', parameters=None):
+    def get_paths(self, attribute_key, measure='frequency', parameters=None):
         """
         Gets the paths from the log
         Parameters
@@ -896,7 +901,7 @@ class ParquetHandler(object):
         if parameters is None:
             parameters = {}
 
-        dfg = df_statistics.get_dfg_graph(self.dataframe, activity_key=attribute_key, measure= measure,
+        dfg = df_statistics.get_dfg_graph(self.dataframe, activity_key=attribute_key, measure=measure,
                                           timestamp_key=DEFAULT_TIMESTAMP_KEY,
                                           case_id_glue=CASE_CONCEPT_NAME, sort_caseid_required=False,
                                           sort_timestamp_along_case_id=False)
@@ -948,7 +953,7 @@ class ParquetHandler(object):
 
         df2 = self.dataframe[attributes2].dropna()
         df2_len = len(df2)
-        number_partitions = math.ceil(float(df2_len)/float(ws_constants.MAX_NO_EVENTS_PER_DOTTED))
+        number_partitions = math.ceil(float(df2_len) / float(ws_constants.MAX_NO_EVENTS_PER_DOTTED))
         if number_partitions > 1:
             df2["@@dotted_grouped"] = df2.groupby(ws_constants.DEFAULT_CASE_INDEX_KEY).ngroup()
             df2["@@partition"] = df2["@@dotted_grouped"] % number_partitions
@@ -1014,3 +1019,35 @@ class ParquetHandler(object):
                   "ancestor_cases_number": ancestor_cases_number, "ancestor_events_number": ancestor_events_number}
 
         return dictio
+
+    def get_events_distribution(self):
+        x0, y0 = attr_get.get_events_distribution(self.dataframe, distr_type="days_month")
+        x1, y1 = attr_get.get_events_distribution(self.dataframe, distr_type="months")
+        x2, y2 = attr_get.get_events_distribution(self.dataframe, distr_type="years")
+        x3, y3 = attr_get.get_events_distribution(self.dataframe, distr_type="hours")
+        x4, y4 = attr_get.get_events_distribution(self.dataframe, distr_type="days_week")
+
+        dicto = {
+            "days_month": {
+                "x": x0,
+                "y": y0
+            },
+            "months": {
+                "x": x1,
+                "y": y1
+            },
+            "years": {
+                "x": x2,
+                "y": y2
+            },
+            "hours": {
+                "x": x3,
+                "y": y3
+            },
+            "days_week": {
+                "x": x4,
+                "y": y4
+            }
+        }
+
+        return  dicto
