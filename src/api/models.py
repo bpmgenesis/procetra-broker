@@ -23,6 +23,14 @@ class MappingModel(OrgDbBase):
     mapping_file_name = Column(String(length=100))
     mapping_data = Column(Text())
 
+class ConformanceBPMNDiagramModel(OrgDbBase):
+    __tablename__ = 'bpmn_models'
+    id = Column(String(length=100), primary_key=True, index=True)
+    realm_id = Column(String(length=100),  index=True)
+    tenant_id = Column(String(length=100),  index=True)
+    scope_id = Column(String(length=100),  index=True)
+    model_name = Column(String(length=255))
+    model_content = Column(Text())
 
 class ProjectDBModel(OrgDbBase):
     __tablename__ = 'projects'

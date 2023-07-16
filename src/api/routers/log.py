@@ -33,6 +33,7 @@ from api.schemas import SessionData
 from api.repository import event_log
 import os
 import pm4py
+import tempfile
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
 from procetraconfiguration import configuration as Configuration
@@ -49,6 +50,11 @@ from api.routers.globals import session_manager, clean_expired_sessions, check_s
 from session import get_session, SessionInfo
 
 import numpy as np
+
+from pm4py.algo.discovery.inductive import algorithm as inductive_miner
+from pm4py.objects.log.importer.xes import importer as xes_importer
+from pm4py.visualization.petri_net import visualizer as pn_vis
+from pm4py.objects.conversion.process_tree import converter as process_tree_converter
 
 nat = np.datetime64('NaT')
 
@@ -1376,6 +1382,27 @@ def dfg_diagram(  # session: SessionInfo = Depends(get_session),
     #       'frequency': dfg[key]
     #   })
 
+    process_tree = inductive_miner.apply(df)
+    net, initial_marking, final_marking = process_tree_converter.apply(process_tree)
+
+    # variant = pn_vis.Variants.PERFORMANCE
+    # parameters_viz = {pn_vis.Variants.PERFORMANCE.value.Parameters.AGGREGATION_MEASURE: "mean",
+    #                   pn_vis.Variants.PERFORMANCE.value.Parameters.FORMAT: "svg"}
+    # gviz = pn_vis.apply(net, initial_marking, final_marking, log=log, variant=variant,
+    #                     parameters=parameters_viz)
+    # pn_vis.view(gviz)
+
+    variant = pn_vis.Variants.FREQUENCY
+    parameters_viz = {pn_vis.Variants.FREQUENCY.value.Parameters.FORMAT: "svg"}
+    gviz = pn_vis.apply(net, initial_marking, final_marking, log=df, variant=variant,
+                        parameters=parameters_viz)
+
+    res = str(gviz)
+    dicto = {
+        'diagram': res
+    }
+    # eturn dicto
+
     format = 'svg'
     from pm4py.visualization.dfg import visualizer as dfg_visualizer
     dfg_parameters = dfg_visualizer.Variants.FREQUENCY.value.Parameters
@@ -1411,6 +1438,27 @@ def get_bpmn_diagram(  # session: SessionInfo = Depends(get_session),
     }
 
     return dicto
+
+
+@router.post('/GetBpmnXml')
+def get_bpmn_xml(  # session: SessionInfo = Depends(get_session),
+        session_id: str = Form(...),
+        project_id: str = Form(...),
+        attribute_key: str = Form('concept:name')):
+    df = session_manager.get_handler_for_process_and_session(project_id, session_id).dataframe
+
+    bpmn_graph = pm4py.discover_bpmn_inductive(df, activity_key='concept:name', case_id_key='case:concept:name',
+                                               timestamp_key='time:timestamp')
+
+    # from pm4py.objects.bpmn.layout import layouter
+    # model = layouter.apply(bpmn_graph)
+
+    from pm4py.objects.bpmn.exporter.variants.etree import get_xml_string
+    result = get_xml_string(bpmn_graph, parameters=None)
+
+    return {
+        "diagram": result
+    }
 
 
 @router.post('/GetDailyCasesPerMonth')
@@ -1541,6 +1589,8 @@ def get_activities_throughput_times(session: SessionInfo = Depends(get_session),
 def get_events_distribution(session_id: str = Form(...), project_id: str = Form(...)):
     handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
     return handler.get_events_distribution()
+
+
 @router.post('/GetBottlenecks')
 def get_bottlenecks(session_id: str = Form(...), project_id: str = Form(...),
                     attribute_key: str = Form('concept:name')):

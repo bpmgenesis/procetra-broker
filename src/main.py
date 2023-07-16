@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routers import project, session, log, \
     pre_processing, statistics, process_schema, \
     analyse_model, mappings, \
-    filter, metrics
+    filter, metrics, query, conformance_check
 from api.routers import import_event_data, load_log
 from api.database import engine
 from fastapi.middleware.gzip import GZipMiddleware
@@ -90,6 +90,8 @@ app.include_router(statistics.router)
 app.include_router(import_event_data.router)
 app.include_router(load_log.router)
 app.include_router(process_schema.router)
+app.include_router(query.router)
+app.include_router(conformance_check.router)
 
 # app.include_router(blog.router)
 # app.include_router(user.router)

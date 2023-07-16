@@ -1050,4 +1050,70 @@ class ParquetHandler(object):
             }
         }
 
-        return  dicto
+        return dicto
+
+    def get_variants_statistics(self):
+        variants_df = self.variants_df
+        variants_df = variants_df.groupby('variant').agg(
+            {'variant': "count", 'caseDuration': ['sum', 'mean', 'min', 'max']})
+
+        variants_df.columns = ["count", "caseDuration_sum", "caseDuration_mean", "caseDuration_min",
+                               "caseDuration_max"]
+        variants_df['variant'] = variants_df.index
+        variants_df["rate_count"] = variants_df["count"].apply(
+            lambda x: 100 * x / float(variants_df["count"].sum()))
+        variants_df["rate_duration"] = variants_df["caseDuration_sum"].apply(
+            lambda x: 100 * x / float(variants_df["caseDuration_sum"].sum()))
+        variants_df.sort_values(by='count', ascending=False, inplace=True)
+
+        result = variants_df.to_dict(orient="records")
+
+        return result
+
+    def get_activity_statistics(self, dataframe=None):
+        mf = df = dataframe if dataframe is not None else self.dataframe
+
+        if 'start_timestamp' in df.columns:
+            df["time:timestamp"] = pd.to_datetime(df["time:timestamp"])
+            df["start_timestamp"] = pd.to_datetime(df["start_timestamp"])
+
+            df["diff"] = df["time:timestamp"] - df["start_timestamp"]
+            # mf = df.groupby('concept:name').agg({"concept:name": "count"})
+            # mf["rate"] = mf["count"].apply(lambda x: 100 * x / float(mf["count"].sum()))
+            if 'concept:cost' in df.columns:
+                mf = df.groupby('concept:name').agg(
+                    {"concept:name": "count", "diff": ["mean", "median", "max", "min"], 'concept:cost': ['sum']})
+                mf.columns = ["count", "mean", "median", "max", "min", 'cost']
+            else:
+                mf = df.groupby('concept:name').agg({"concept:name": "count", "diff": ["mean", "median", "max", "min"]})
+                mf.columns = ["count", "mean", "median", "max", "min"]
+            mf['duration_range'] = mf['max'] - mf['min']
+        else:
+            if 'concept:cost' in df.columns:
+                mf = df.groupby('concept:name').agg({"concept:name": "count", 'concept:cost': ['sum']})
+                mf.columns = ["count", 'cost']
+            else:
+                mf = df.groupby('concept:name').agg({"concept:name": "count"})
+                mf.columns = ["count"]
+
+        mf["rate"] = mf["count"].apply(lambda x: 100 * x / float(mf["count"].sum()))
+
+        if 'concept:cost' in df.columns:
+            mf["cost_rate"] = mf["cost"].apply(lambda x: 100 * x / float(mf["cost"].sum()))
+
+        mf["min_freq"] = mf["count"].min()
+        mf["mean_freq"] = mf["count"].mean()
+        mf["max_freq"] = mf["count"].max()
+        mf["max_rate"] = mf["rate"].max()
+
+        # mf['median'] = mf['median'] * 1000  # convert to miliseconds
+
+        mf = mf.sort_values(by=["count"], ascending=False)
+        mf['concept:name'] = mf.index
+        cols = mf.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        mf = mf[cols]
+
+        case_info = mf.to_dict(orient="records")
+
+        return case_info

@@ -17,6 +17,7 @@
 
 from typing import Optional, Dict, Any, Collection
 import pandas as pd
+from fastapi import APIRouter, Form
 from pm4py.objects.log.obj import EventLog, EventStream
 from pm4py.objects.ocel.obj import OCEL
 from pm4py.algo.querying.openai import log_to_dfg_descr, log_to_variants_descr, log_to_cols_descr
@@ -30,6 +31,10 @@ from enum import Enum
 from pm4py.util import exec_utils, constants, xes_constants
 
 import os
+
+from api.handlers.parquet.parquet import ParquetHandler
+from api.routers.globals import session_manager
+
 os.environ["PM4PY_OPENAI_API_KEY"] = "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"
 
 class Parameters(Enum):
@@ -160,12 +165,13 @@ def suggest_improvements(log_obj: Union[pd.DataFrame, EventLog, EventStream], pa
 
     log_obj = log_converter.apply(log_obj, variant=log_converter.Variants.TO_DATA_FRAME, parameters=parameters)
     activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
+    api_key = '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'  # exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
 
-    api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+    # api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_dfg_descr.apply(log_obj, parameters=parameters)
-    query += "how to optimize the execution of the aforementioned process ?  Please only data and process specific considerations, not general considerations. Also, if possible, tell me which steps can be parallelized to increase the performance of the process."
+    query += "how to optimize the execution of the aforementioned process ?  Please only data and process specific considerations, not general considerations. Also, if possible, tell me which steps can be parallelized to increase the performance of the process. Please answer in Turkish."
 
     if not execute_query:
         return query
@@ -390,3 +396,14 @@ def filtering_query(log_obj: Union[pd.DataFrame, EventLog, EventStream], filteri
     res = perform_query.apply(query, parameters=parameters)
 
     return res
+
+
+router = APIRouter(
+    prefix="/v1",
+    tags=['Log Handling']
+)
+
+@router.post('/ProsessAI')
+def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: str = Form(...)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    return query_wrapper(handler.dataframe, query)

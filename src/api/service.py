@@ -2,7 +2,7 @@ import pandas as pd
 import pm4py
 from pandas import DataFrame
 from typing import Tuple, Union, List, Dict, Any, Optional
-
+from pm4py.algo.discovery.dfg.adapters.pandas import df_statistics
 
 class Discovery:
     @staticmethod
@@ -13,6 +13,10 @@ class Discovery:
         dfg, start_activities, end_activities = pm4py.discover_dfg(log, case_id_key='case:concept:name',
                                                                    activity_key='concept:name',
                                                                    timestamp_key='time:timestamp')
+
+        dfg, start_activities, end_activities = pm4py.discover_performance_dfg(log)
+
+        # result = df_statistics.get_dfg_graph(log,measure="both")
         # pm4py.view_dfg(dfg, start_activities, end_activities, format='svg')
 
         format = 'svg'

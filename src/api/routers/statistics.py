@@ -61,11 +61,10 @@ async def get_statistics(log_id: str = Form(...), activity_name: str = Form(...)
 
 
 @router.post('/GetActivityStatistics')
-async def get_activity_statistics(session_id: str = Form(...), project_id: str = Form(...), db: Session = Depends(get_db)):
+async def get_activity_statistics(session_id: str = Form(...), project_id: str = Form(...),
+                                  db: Session = Depends(get_db)):
     handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
     mf = df = handler.dataframe
-
-
 
     if 'start_timestamp' in df.columns:
         df["time:timestamp"] = pd.to_datetime(df["time:timestamp"])
@@ -111,6 +110,16 @@ async def get_activity_statistics(session_id: str = Form(...), project_id: str =
     case_info = mf.to_dict(orient="records")
 
     db.close()
+    return case_info
+
+
+@router.post('/GetVariantActivityStatistics')
+async def get_variant_activity_statistics(session_id: str = Form(...), project_id: str = Form(...),
+                                          variant: str = Form(...), db: Session = Depends(get_db)):
+    handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
+    df = pm4py.filter_variants(handler.dataframe,
+                               [tuple(variant.split(','))])
+    case_info = handler.get_activity_statistics(df)
     return case_info
 
 
