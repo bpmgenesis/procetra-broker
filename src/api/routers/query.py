@@ -70,7 +70,7 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
 
     # load_training_data(training_data_path)
 
-    # handler.training_data = [
+    handler.training_data = []
     #     {"role": "user",
     #      "content": "Şimdi sana bir süreç hakkında bilgiler vereceğim. Daha sonra sorular sorulduğunda hep bu süreç bazında cevaplar vermeni istiyorum."},
     #     {"role": "user",
