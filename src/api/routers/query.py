@@ -83,6 +83,8 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
     Please your answers will be html.
        """
     #execute_query = False
+
+    return openai.api_key
     if not execute_query:
         return query
 
