@@ -84,7 +84,11 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
        """
     #execute_query = False
 
-    return openai.api_key
+    openai.api_key = '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'
+    messages = [{"role": "user", "content": query}]
+    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    return response["choices"][0]["message"]["content"]
+
     if not execute_query:
         return query
 
