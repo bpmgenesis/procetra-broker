@@ -26,7 +26,6 @@ from pm4py import format_dataframe, BPMN
 from sqlalchemy.types import Integer, Text, String, DateTime
 from pydantic import BaseModel
 
-from api.routers.query import query_wrapper
 from api.service import Vis
 from api.session import verifier, cookie, backend
 from api.schemas import SessionData
