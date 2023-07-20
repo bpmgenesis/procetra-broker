@@ -1,0 +1,5 @@
+[
+  {"role": "user", "content": "Bu sürecin adı nedir?"},
+  {"role": "assistant", "content": "Bu sürecin adı Satınalma sürecidir."}
+
+]

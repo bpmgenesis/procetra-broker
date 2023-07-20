@@ -78,6 +78,8 @@ class ParquetHandler(object):
         # classifier
         self.activity_key = None
 
+        self.training_data = []
+
         self.is_lazy = is_lazy
         self.sorted_dataframe_basilar = False
         self.sorted_dataframe_by_case_id = False

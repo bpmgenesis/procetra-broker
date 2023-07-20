@@ -69,28 +69,15 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
     #     return data
 
     # load_training_data(training_data_path)
-    training_data = [
-        {"role": "user",
-         "content": "Aşağıda Satınalma sürecinin performans ve frekans verilerini içeren bilfgiler vardır."},
-        {"role": "user", "content": """ 
-            Sektör Onayı-Giriş -> Sektör Onayı-Kapanış -> Onayı-Sektör Onayı ( frequency = 5  performance = 7908.0 )
-            Mevzuat Onayı-Giriş -> Mevzuat Onayı-Kapanış -> Kampanya İnceleme Onayı ( frequency = 5  performance = 1080.0 )
-            Pazarlama Onayı-Giriş -> Pazarlama Onayı-Kapanış -> Onayı-Pazarlama Onayı ( frequency = 4  performance = 683865.0 )
-            Sektör Onayı-Giriş -> Onayı-Sektör Onayı -> Sektör Onayı-Kapanış ( frequency = 4  performance = 5070.0 )
-            Mevzuat Onayı-Giriş -> Kampanya İnceleme Onayı -> Mevzuat Onayı-Kapanış ( frequency = 4  performance = 960.0 )
-            Kampanya Yönetimi-Giriş -> Yönetimi-İşlem Onayı -> Pazarlama Müdür Onayı -> Kampanya Yönetimi-Kapanış -> Yönetimi-Kurumsal İletişim ( frequency = 3  performance = 11240.0 )
-            Giriş -> Yönetimi-İşlem Onayı -> Pazarlama Müdür Onayı -> Yönetimi-Kurumsal İletişim -> Kampanya Yönetimi-Kapanış ( frequency = 1  performance = 2743680.0 )
-            Kampanya Yönetimi-Giriş -> Yönetimi-İşlem Onayı -> Pazarlama Müdür Onayı -> Yönetimi-Kurumsal İletişim -> Kampanya Yönetimi-Kapanış ( frequency = 1  performance = 20040.0 )
-            Pazarlama Onayı-Giriş -> Onayı-Pazarlama Onayı -> Pazarlama Onayı-Kapanış ( frequency = 1  performance = 2040.0 )
-            Mevzuat Onayı-Giriş -> Kampanya İnceleme Onayı ( frequency = 1  performance = 240.0 )
-            Kampanya Yönetimi-Giriş -> Yönetimi-İşlem Onayı ( frequency = 1  performance = 60.0 )
-            Pazarlama Onayı-Giriş -> Onayı-Pazarlama Onayı ( frequency = 1  performance = 0.0 )"""
-         },
-        {"role": "user",
-         "content": "Yukarıdaki süreçle ilgili soru soruldugunda mutlaka bu süreç özelinde cevap ver"},
-        {"role": "user",
-         "content": "Please provide responses in html format."},
-    ]
+
+    # handler.training_data = [
+    #     {"role": "user",
+    #      "content": "Şimdi sana bir süreç hakkında bilgiler vereceğim. Daha sonra sorular sorulduğunda hep bu süreç bazında cevaplar vermeni istiyorum."},
+    #     {"role": "user",
+    #      "content": "Sürecin adı Kredi Kartı surecidir."},
+    #     {"role": "user",
+    #      "content": "Performans ve frekans verilerini içeren bilgileri vardır."},
+    # ]
 
     parameters = {}
 
@@ -104,19 +91,30 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
     exec_result = exec_utils.get_param_value(Parameters.EXEC_RESULT, parameters, constants.OPENAI_EXEC_RESULT)
 
-    full_query = log_to_variants_descr.apply(log_obj, parameters=parameters)
-    full_query += query
-    full_query += """ Please only data and process specific considerations, not general considerations. 
-    Please your answers will be html.
-       """
+    #full_query = log_to_variants_descr.apply(log_obj, parameters=parameters)
+
+    handler.training_data.append({"role": "user", "content": log_to_variants_descr.apply(log_obj, parameters=parameters)})
+    #training_data.append({"role": "user", "content": 'Please only data and process specific considerations, not general considerations.'})
+
+    # Please only data and process specific considerations, not general considerations.
+
+    full_query = query
+    full_query += """
+     Please provide responses in html format.
+        """
     # execute_query = False
 
     openai.api_key = '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'
     openai.organization = 'org-FHpsYObt6rUzipCfijAqLuHE'
 
-    messages = training_data.append({"role": "user", "content": full_query})
+    messages = handler.training_data.append({"role": "user", "content": full_query})
 
-    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=training_data)
+
+
+
+    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=handler.training_data)
+
+    handler.training_data.append({"role": "assistant", "content": response["choices"][0]["message"]["content"]})
     return response["choices"][0]["message"]["content"]
 
     if not execute_query:
