@@ -37,6 +37,11 @@ from api.routers.globals import session_manager
 
 #os.environ["PM4PY_OPENAI_API_KEY"] = "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"
 
+import openai
+
+openai.api_key = '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'
+
+
 
 class Parameters(Enum):
     EXECUTE_QUERY = "execute_query"
@@ -68,7 +73,7 @@ def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: 
 
     # api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
 
-    api_key = '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'
+    #api_key = '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'
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
     exec_result = exec_utils.get_param_value(Parameters.EXEC_RESULT, parameters, constants.OPENAI_EXEC_RESULT)
 
