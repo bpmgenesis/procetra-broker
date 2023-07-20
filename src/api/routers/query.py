@@ -37,6 +37,7 @@ from api.routers.globals import session_manager
 
 os.environ["PM4PY_OPENAI_API_KEY"] = "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"
 
+
 class Parameters(Enum):
     EXECUTE_QUERY = "execute_query"
     API_KEY = "api_key"
@@ -44,14 +45,17 @@ class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
 
 
-AVAILABLE_LOG_QUERIES = ["describe_process", "describe_path", "describe_activity", "suggest_improvements", "code_for_log_generation",
-                         "root_cause_analysis", "describe_variant", "compare_logs", "anomaly_detection", "suggest_clusters",
+AVAILABLE_LOG_QUERIES = ["describe_process", "describe_path", "describe_activity", "suggest_improvements",
+                         "code_for_log_generation",
+                         "root_cause_analysis", "describe_variant", "compare_logs", "anomaly_detection",
+                         "suggest_clusters",
                          "conformance_checking", "suggest_verify_hypotheses", "filtering_query",
                          "abstract_dfg", "abstract_variants", "abstract_columns", "abstract_ocel", "abstract_stream",
                          "abstract_ocel_ocdfg", "abstract_ocel_features"]
 
 
-def query_wrapper(log_obj: Union[pd.DataFrame, EventLog, EventStream, OCEL], type: str, args: Optional[Dict[Any, Any]] = None, parameters: Optional[Dict[Any, Any]] = None) -> str:
+def query_wrapper(log_obj: Union[pd.DataFrame, EventLog, EventStream, OCEL], type: str,
+                  args: Optional[Dict[Any, Any]] = None, parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -102,14 +106,15 @@ def query_wrapper(log_obj: Union[pd.DataFrame, EventLog, EventStream, OCEL], typ
         return ocel_fea_descr.apply(log_obj, args["type"], parameters=parameters)
 
 
-def describe_process(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def describe_process(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                     parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
     log_obj = log_converter.apply(log_obj, variant=log_converter.Variants.TO_DATA_FRAME, parameters=parameters)
     activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
 
-    api_key = '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' #exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+    api_key = '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'  # exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_dfg_descr.apply(log_obj, parameters=parameters)
@@ -121,7 +126,8 @@ def describe_process(log_obj: Union[pd.DataFrame, EventLog, EventStream], parame
     return perform_query.apply(query, parameters=parameters)
 
 
-def describe_path(log_obj: Union[pd.DataFrame, EventLog, EventStream], path: Tuple[str, str], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def describe_path(log_obj: Union[pd.DataFrame, EventLog, EventStream], path: Tuple[str, str],
+                  parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -132,7 +138,7 @@ def describe_path(log_obj: Union[pd.DataFrame, EventLog, EventStream], path: Tup
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_dfg_descr.apply(log_obj, parameters=parameters)
-    query += "can you describe the meaning of the step "+path[0]+" -> "+path[1]+" ?"
+    query += "can you describe the meaning of the step " + path[0] + " -> " + path[1] + " ?"
 
     if not execute_query:
         return query
@@ -140,7 +146,8 @@ def describe_path(log_obj: Union[pd.DataFrame, EventLog, EventStream], path: Tup
     return perform_query.apply(query, parameters=parameters)
 
 
-def describe_activity(log_obj: Union[pd.DataFrame, EventLog, EventStream], activity: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
+def describe_activity(log_obj: Union[pd.DataFrame, EventLog, EventStream], activity: str,
+                      parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -151,7 +158,7 @@ def describe_activity(log_obj: Union[pd.DataFrame, EventLog, EventStream], activ
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_dfg_descr.apply(log_obj, parameters=parameters)
-    query += "can you describe the meaning of the activity "+activity+" ?"
+    query += "can you describe the meaning of the activity " + activity + " ?"
 
     if not execute_query:
         return query
@@ -159,7 +166,8 @@ def describe_activity(log_obj: Union[pd.DataFrame, EventLog, EventStream], activ
     return perform_query.apply(query, parameters=parameters)
 
 
-def suggest_improvements(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def suggest_improvements(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                         parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -179,18 +187,20 @@ def suggest_improvements(log_obj: Union[pd.DataFrame, EventLog, EventStream], pa
     return perform_query.apply(query, parameters=parameters)
 
 
-def anomalous_paths(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def anomalous_paths(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                    parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
     log_obj = log_converter.apply(log_obj, variant=log_converter.Variants.TO_DATA_FRAME, parameters=parameters)
     activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
 
-    api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+    # api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+    api_key = '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'
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_dfg_descr.apply(log_obj, parameters=parameters)
-    query += "which are the paths, included in the directly-follows graph, that looks more anomalous? Could you also explain why they are anomalous? Please only data and process specific considerations, not general considerations."
+    query += "which are the paths, included in the directly-follows graph, that looks more anomalous? Could you also explain why they are anomalous? Please only data and process specific considerations, not general considerations. Please response  markdown format."
 
     if not execute_query:
         return query
@@ -207,7 +217,7 @@ def code_for_log_generation(desired_process: str, parameters: Optional[Dict[Any,
     exec_result = exec_utils.get_param_value(Parameters.EXEC_RESULT, parameters, constants.OPENAI_EXEC_RESULT)
 
     query = """Can you provide me some code to simulate a process? the result should be a Pandas dataframe where each row is an event containing the case/process execution (column case:concept:name), the activity (column concept:name) and timestamp (column time:timestamp).
-several activities should be included in the dataframe, and the dataframe should contain some variations of the order of the activities. Additional columns related to the process can be included in the dataframe. The process to simulate is: """+desired_process+". Please provide me only the code."
+several activities should be included in the dataframe, and the dataframe should contain some variations of the order of the activities. Additional columns related to the process can be included in the dataframe. The process to simulate is: """ + desired_process + ". Please provide me only the code."
 
     if not execute_query:
         return query
@@ -215,7 +225,8 @@ several activities should be included in the dataframe, and the dataframe should
     return perform_query.apply(query, parameters=parameters)
 
 
-def root_cause_analysis(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def root_cause_analysis(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                        parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -234,7 +245,8 @@ def root_cause_analysis(log_obj: Union[pd.DataFrame, EventLog, EventStream], par
     return perform_query.apply(query, parameters=parameters)
 
 
-def describe_variant(log_obj: Union[pd.DataFrame, EventLog, EventStream], variant: Collection[str], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def describe_variant(log_obj: Union[pd.DataFrame, EventLog, EventStream], variant: Collection[str],
+                     parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -245,7 +257,7 @@ def describe_variant(log_obj: Union[pd.DataFrame, EventLog, EventStream], varian
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
 
     query = log_to_variants_descr.apply(log_obj, parameters=parameters)
-    query += "can you describe (example, if you see something anomalous) the variant: "+" -> ".join(list(variant))
+    query += "can you describe (example, if you see something anomalous) the variant: " + " -> ".join(list(variant))
 
     if not execute_query:
         return query
@@ -253,7 +265,8 @@ def describe_variant(log_obj: Union[pd.DataFrame, EventLog, EventStream], varian
     return perform_query.apply(query, parameters=parameters)
 
 
-def compare_logs(log1: Union[pd.DataFrame, EventLog, EventStream], log2: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def compare_logs(log1: Union[pd.DataFrame, EventLog, EventStream], log2: Union[pd.DataFrame, EventLog, EventStream],
+                 parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -279,19 +292,26 @@ def compare_logs(log1: Union[pd.DataFrame, EventLog, EventStream], log2: Union[p
     return perform_query.apply(query, parameters=parameters)
 
 
-def anomaly_detection(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def anomaly_detection(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                      parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
     log_obj = log_converter.apply(log_obj, variant=log_converter.Variants.TO_DATA_FRAME, parameters=parameters)
     activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
 
-    api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+    # api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+
+    api_key = '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'
     execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
     exec_result = exec_utils.get_param_value(Parameters.EXEC_RESULT, parameters, constants.OPENAI_EXEC_RESULT)
 
     query = log_to_variants_descr.apply(log_obj, parameters=parameters)
-    query += "what are the main anomalies? An anomaly involves a strange ordering of the activities, or a significant amount of rework. Please only data and process specific considerations, not general considerations. Please sort the anomalies based on their seriousness."
+    query += """what are the main anomalies? An anomaly involves a strange ordering of the activities, or a significant 
+    amount of rework. Please only data and process specific considerations, not general considerations. Please sort the 
+    anomalies based on their seriousness. please your answers will be html format, please your answer include only html 
+    code.
+    """
 
     if not execute_query:
         return query
@@ -301,7 +321,8 @@ def anomaly_detection(log_obj: Union[pd.DataFrame, EventLog, EventStream], param
     return res
 
 
-def suggest_clusters(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def suggest_clusters(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                     parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -323,7 +344,8 @@ def suggest_clusters(log_obj: Union[pd.DataFrame, EventLog, EventStream], parame
     return res
 
 
-def conformance_checking(log_obj: Union[pd.DataFrame, EventLog, EventStream], rule: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
+def conformance_checking(log_obj: Union[pd.DataFrame, EventLog, EventStream], rule: str,
+                         parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -347,7 +369,8 @@ def conformance_checking(log_obj: Union[pd.DataFrame, EventLog, EventStream], ru
     return res
 
 
-def suggest_verify_hypotheses(log_obj: Union[pd.DataFrame, EventLog, EventStream], parameters: Optional[Dict[Any, Any]] = None) -> str:
+def suggest_verify_hypotheses(log_obj: Union[pd.DataFrame, EventLog, EventStream],
+                              parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -371,7 +394,8 @@ def suggest_verify_hypotheses(log_obj: Union[pd.DataFrame, EventLog, EventStream
     return res
 
 
-def filtering_query(log_obj: Union[pd.DataFrame, EventLog, EventStream], filtering_query: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
+def filtering_query(log_obj: Union[pd.DataFrame, EventLog, EventStream], filtering_query: str,
+                    parameters: Optional[Dict[Any, Any]] = None) -> str:
     if parameters is None:
         parameters = {}
 
@@ -403,7 +427,33 @@ router = APIRouter(
     tags=['Log Handling']
 )
 
+
 @router.post('/ProsessAI')
 def process_ai(session_id: str = Form(...), project_id: str = Form(...), query: str = Form(...)):
     handler: ParquetHandler = session_manager.get_handler_for_process_and_session(project_id, session_id)
-    return query_wrapper(handler.dataframe, query)
+    # return query_wrapper(handler.dataframe, query)
+
+    parameters = {}
+
+    log_obj = log_converter.apply(handler.dataframe, variant=log_converter.Variants.TO_DATA_FRAME,
+                                  parameters=parameters)
+    activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
+
+    # api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
+
+    api_key = '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'
+    execute_query = exec_utils.get_param_value(Parameters.EXECUTE_QUERY, parameters, api_key is not None)
+    exec_result = exec_utils.get_param_value(Parameters.EXEC_RESULT, parameters, constants.OPENAI_EXEC_RESULT)
+
+    full_query = log_to_variants_descr.apply(log_obj, parameters=parameters)
+    full_query += query
+    full_query += """ Please only data and process specific considerations, not general considerations. 
+    Please your answers will be html.
+       """
+    #execute_query = False
+    if not execute_query:
+        return query
+
+    res = perform_query.apply(full_query, parameters=parameters)
+
+    return res
