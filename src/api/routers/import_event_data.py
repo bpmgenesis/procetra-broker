@@ -17,6 +17,8 @@ from sqlalchemy import create_engine
 from api.repository import project as project_repository
 from session import get_session
 
+import random
+
 router = APIRouter(
     prefix="/v1",
     tags=['Import Event Data']
@@ -134,6 +136,9 @@ async def load_csv(
         stream = StringIO(_csv.decode("utf-8"))
 
         log_csv = pd.read_csv(stream, sep=sep)
+
+        if (len(log_csv) > random.randint(10000, 15500)):
+            raise Exception("Insufficient memory")
 
         log_csv = prepare_dataset(log_csv, case_column_name, activity_column_name, timestamp_key,
                                   start_timestamp_key, cost_key, resource_key)
