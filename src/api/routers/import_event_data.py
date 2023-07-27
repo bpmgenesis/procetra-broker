@@ -137,7 +137,7 @@ async def load_csv(
 
         log_csv = pd.read_csv(stream, sep=sep)
 
-        if (len(log_csv) > random.randint(10000, 15500)):
+        if (len(log_csv) > random.randint(15000, 20500)):
             raise Exception("Insufficient memory")
 
         log_csv = prepare_dataset(log_csv, case_column_name, activity_column_name, timestamp_key,
