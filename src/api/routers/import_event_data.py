@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter
 from api import database, schemas, schemas
 from fastapi import APIRouter, Depends, status, File, UploadFile, Form, HTTPException
@@ -137,8 +139,8 @@ async def load_csv(
 
         log_csv = pd.read_csv(stream, sep=sep)
 
-        if (len(log_csv) > random.randint(15000, 20500)):
-            raise Exception("Insufficient memory")
+        #if (len(log_csv) > random.randint(15000, 20500) and os.getenv('ENV') != 'dev'):
+        #    raise Exception("Insufficient memory")
 
         log_csv = prepare_dataset(log_csv, case_column_name, activity_column_name, timestamp_key,
                                   start_timestamp_key, cost_key, resource_key)
